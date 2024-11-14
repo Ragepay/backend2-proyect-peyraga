@@ -5,6 +5,7 @@ import pathHandler from "./src/middlewares/pathHandler.mid.js";
 import errorHandler from "./src/middlewares/errorHandler.mid.js";
 import indexRouter from "./src/routers/index.router.js";
 import dbConnect from "./src/utils/dbConnect.util.js";
+import cookieParser from "cookie-parser";
 
 /* INICIALIZACION DE SERVER BASICO */
 //------------------------------------------------------------------------------------
@@ -31,6 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 // Middleware de Terceros.
 // Muestra por consola un registro de las solicitudes HTTPs (GET, POST, PUT, DELETE).
 app.use(morgan("dev"));
+app.use(cookieParser(process.env.SECRET_KEY));
 
 // Middleware de routers.
 app.use(indexRouter);
