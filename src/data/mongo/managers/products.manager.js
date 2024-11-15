@@ -1,5 +1,11 @@
 import Products from "../models/product.model.js";
+import Manager from "./manager.js";
 
+const productsManager = new Manager(Products);
+const { create, read, update, destroy } = productsManager
+export { create, read, update, destroy };
+
+/*
 const create = async (data) => {
     try {
         const one = await Products.create(data);
@@ -36,6 +42,4 @@ const destroy = async (id) => {
         throw error;
     };
 };
-
-export { create, read, update, destroy };
-
+*/

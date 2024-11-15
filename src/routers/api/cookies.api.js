@@ -1,10 +1,9 @@
-import { signedCookie } from "cookie-parser";
 import { Router } from "express";
 
-const cookieRouter = Router();
+const cookieApiRouter = Router();
 
 // GET Leer todas las cookies mediantes req.cookies.
-cookieRouter.get("/get", (req, res, next) => {
+cookieApiRouter.get("/get", (req, res, next) => {
     try {
         const message = "TODAS LAS COOKIES LEIDAS"
         const cookies = req.cookies;
@@ -15,7 +14,7 @@ cookieRouter.get("/get", (req, res, next) => {
 });
 
 // GET Leer una cookie en especifico por params del endpoint mediante el req.cookies.
-cookieRouter.get("/get/:clave", (req, res, next) => {
+cookieApiRouter.get("/get/:clave", (req, res, next) => {
     try {
         const message = "COOKIE LEIDA"
         const { clave } = req.params
@@ -27,7 +26,7 @@ cookieRouter.get("/get/:clave", (req, res, next) => {
 });
 
 // POST Creacion/Actualizacion de una cookie, se sobre-escribe cuando se modifica, con el mismo metodo de creacion.
-cookieRouter.post("/set", (req, res, next) => {
+cookieApiRouter.post("/set", (req, res, next) => {
     try {
         // para setear/crear una cooki necesito enviar el par clave/valor de la cookie en el objeto de respuesta con el metodo cookie.
         const message = "COOKIE CREADA/SETEADA";
@@ -45,14 +44,14 @@ cookieRouter.post("/set", (req, res, next) => {
 });
 
 // DELETE Eliminar una cookie en especifico.
-cookieRouter.delete("/delete/:cookie", (req, res, next) => {
+cookieApiRouter.delete("/delete/:clave", (req, res, next) => {
     try {
         // asi como la creacion de una cookie se hace en el objeto de respuesta a enviar al cliente la eliminacion de una cookie se hace desde el objeto de respuesta.
-        const { cookie } = req.params;
-        const message = "COOKIE: " + cookie + " ELIMINADA";
+        const { clave } = req.params;
+        const message = "COOKIE: " + clave + " ELIMINADA";
         return res.
             status(200)
-            .clearCookie(cookie)
+            .clearCookie(clave)
             .json({ message });
     } catch (error) {
         return next(error);
@@ -60,7 +59,7 @@ cookieRouter.delete("/delete/:cookie", (req, res, next) => {
 });
 
 // POST Crear una cookie con informacion firmada por seguridad.
-cookieRouter.post("/setSigned", (req, res, next) => {
+cookieApiRouter.post("/setSigned", (req, res, next) => {
     try {
         const message = "COOKIE FIRMADA CREADA";
         const { clave, valor } = req.body;
@@ -75,7 +74,7 @@ cookieRouter.post("/setSigned", (req, res, next) => {
 });
 
 // GET Leer una signed cookie.
-cookieRouter.get("/getSigned", (req, res, next) => {
+cookieApiRouter.get("/getSigned", (req, res, next) => {
     try {
         const cookies = req.cookies;
         const signedCookies = req.signedCookies;
@@ -86,4 +85,4 @@ cookieRouter.get("/getSigned", (req, res, next) => {
     };
 });
 
-export default cookieRouter;
+export default cookieApiRouter;

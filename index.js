@@ -6,6 +6,7 @@ import errorHandler from "./src/middlewares/errorHandler.mid.js";
 import indexRouter from "./src/routers/index.router.js";
 import dbConnect from "./src/utils/dbConnect.util.js";
 import cookieParser from "cookie-parser";
+import session from "express-session";
 
 /* INICIALIZACION DE SERVER BASICO */
 //------------------------------------------------------------------------------------
@@ -32,7 +33,15 @@ app.use(express.urlencoded({ extended: true }));
 // Middleware de Terceros.
 // Muestra por consola un registro de las solicitudes HTTPs (GET, POST, PUT, DELETE).
 app.use(morgan("dev"));
+// Utilizada para utilizar cookies, y le podes dar seguridad con signed:true.
 app.use(cookieParser(process.env.SECRET_KEY));
+// Utilizado para crear sessiones, almacena el id en una cookie firmada.
+app.use(session({
+    secret: process.env.SECRET_KEY,
+    resave: true,
+    saveUninitialized: true,
+    cookie: { maxAge: 60000 * 60 },
+}));
 
 // Middleware de routers.
 app.use(indexRouter);
