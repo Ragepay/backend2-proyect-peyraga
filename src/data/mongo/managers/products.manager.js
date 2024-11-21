@@ -2,8 +2,8 @@ import Products from "../models/product.model.js";
 import Manager from "./manager.js";
 
 const productsManager = new Manager(Products);
-const { create, read, update, destroy } = productsManager
-export { create, read, update, destroy };
+const { create, read, readById, update, destroy } = productsManager
+export { create, read, readById, update, destroy };
 
 /*
 const create = async (data) => {

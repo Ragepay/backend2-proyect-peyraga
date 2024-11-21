@@ -7,6 +7,9 @@ import indexRouter from "./src/routers/index.router.js";
 import dbConnect from "./src/utils/dbConnect.util.js";
 import cookieParser from "cookie-parser";
 import session from "express-session";
+//import sessionFileStore from 'session-file-store';
+import MongoStore from "connect-mongo";
+
 
 /* INICIALIZACION DE SERVER BASICO */
 //------------------------------------------------------------------------------------
@@ -33,14 +36,38 @@ app.use(express.urlencoded({ extended: true }));
 // Middleware de Terceros.
 // Muestra por consola un registro de las solicitudes HTTPs (GET, POST, PUT, DELETE).
 app.use(morgan("dev"));
-// Utilizada para utilizar cookies, y le podes dar seguridad con signed:true.
+// Utilizada para utilizar cookies, y le podes dar seguridad con signed:true. Configuracion de cookies.
 app.use(cookieParser(process.env.SECRET_KEY));
-// Utilizado para crear sessiones, almacena el id en una cookie firmada.
+
+/*
+// Utilizado para crear sessiones, almacena el id en una cookie firmada. Configuracion de Sessions en cookie.
+app.use(session({
+    secret: process.env.SECRET_KEY,
+    resave: true, // Permite la reconeccion en caso de desconectarse.
+    saveUninitialized: true, // Crear una session Activa, pero sin inicializar.
+    cookie: { maxAge: 60000 * 60 },
+}));
+*/
+
+/*
+// Utilizando File Storage, para persistencia de las session en archivos dentro del Server. Configuracion de sessions en File Store.
+//------------------------------------------------------------------------------------
+const FileStore = sessionFileStore(session);
 app.use(session({
     secret: process.env.SECRET_KEY,
     resave: true,
     saveUninitialized: true,
-    cookie: { maxAge: 60000 * 60 },
+    store: new FileStore({ path: "./src/data/fs/sessions", ttl: 60, retries: 3 }),
+}));
+//------------------------------------------------------------------------------------
+*/
+
+// Configuracion de session con Mongo Storage.
+app.use(session({
+    secret: process.env.SECRET_KEY,
+    resave: true,
+    saveUninitialized: true,
+    store: new MongoStore({ mongoUrl: process.env.MONGO_LINK, ttl: 60 * 60 * 24 }),
 }));
 
 // Middleware de routers.

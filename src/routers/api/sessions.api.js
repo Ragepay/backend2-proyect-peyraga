@@ -1,37 +1,55 @@
 import { Router } from "express";
-import { create } from "../../data/mongo/managers/users.manager.js";
+import { create, readByEmail, readById } from "../../data/mongo/managers/users.manager.js";
 import isVerifyPassword from "../../middlewares/isVerifyPassword.mid.js";
+import isUser from "../../middlewares/isUser.mid.js";
+import isValidUserData from "../../middlewares/isValidUserData.mid.js";
 
 const sessionApiRouter = Router();
 
+
 // Registrar un usuario.
-sessionApiRouter.post("/register", async (req, res, next) => {
-    try {
-        // middleware para validar campos obligatorios !
-        // middleware de usuario existente
-        const message = "USER REGISTERED";
-        const data = req.body;
-        const response = await create(data);
-        return res.status(201).json({ message, response });
-    } catch (error) {
-        return next(error);
-    };
-});
+sessionApiRouter.post("/register", isValidUserData, isUser, register);
 
 // Login de usuario.
-sessionApiRouter.post("/login", isVerifyPassword, async (req, res, next) => {
+sessionApiRouter.post("/login", isVerifyPassword, login);
+
+// Signout de usuario.
+sessionApiRouter.post("/signout", signout);
+
+// Online usuario.
+sessionApiRouter.post("/online", online);
+
+export default sessionApiRouter;
+
+
+// Funciones Callbacks final de los endpoints de sessions.
+async function register(req, res, next) {
     try {
-        req.session.online = true;
-        req.session.email = req.body.email;
-        const message = "USER LOGGED IN"
-        return res.status(200).json({ message })
+        const message = "USER REGISTERED";
+        const data = req.body;
+        const one = await create(data);
+        return res.status(201).json({ message, one: one._id });
     } catch (error) {
         return next(error);
     };
-});
+}
 
-// Signout de usuario.
-sessionApiRouter.post("/signout", async (req, res, next) => {
+async function login(req, res, next) {
+    try {
+        const { email } = req.body;
+        const user = await readByEmail(email);
+        req.session.online = true;
+        req.session.email = req.body.email;
+        req.session.role = user.role;
+        req.session.user_id = user._id;
+        const message = "USER LOGGED IN";
+        return res.status(200).json({ message, user });
+    } catch (error) {
+        return next(error);
+    };
+}
+
+async function signout(req, res, next) {
     try {
         const session = req.session;
         req.session.destroy();
@@ -40,21 +58,21 @@ sessionApiRouter.post("/signout", async (req, res, next) => {
     } catch (error) {
         return next(error);
     };
-});
+}
 
-// Online usuario.
-sessionApiRouter.post("/online", (req, res, next) => {
+async function online(req, res, next) {
     try {
-        const session = req.session;
-        if (session.online) {
-            const message = "USER ONLINE";
-            return res.status(200).json({ message, session });
+        const { user_id } = req.session;
+        const user = await readById(user_id);
+        console.log(user);
+        if (user_id) {
+            const message = user.email.toUpperCase() + " IS ONLINE";
+            return res.status(200).json({ message, online: true });
+        } else {
+            const message = "USER IS NOT ONLINE";
+            return res.status(400).json({ message, online: false });
         }
-        const message = "INVALID CREDENCIALS";
-        return res.status(401).json({ message });
     } catch (error) {
         return next(error);
     };
-});
-
-export default sessionApiRouter;
+}

@@ -1,9 +1,9 @@
-import { readOne } from "../data/mongo/managers/users.manager.js";
+import { readByEmail } from "../data/mongo/managers/users.manager.js";
 
 const isVerifyPassword = async (req, res, next) => {
     try {
         const { email, password } = req.body;
-        const user = await readOne(email);
+        const user = await readByEmail(email);
         if (user) {
             const verify = (password === user.password);
             if (verify) {

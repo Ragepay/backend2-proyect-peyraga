@@ -31,15 +31,6 @@ class Manager {
         };
     };
 
-    readOne = async (email) => {
-        try {
-            const one = await this.model.findOne({ email }).lean();
-            return one;
-        } catch (error) {
-            throw error;
-        };
-    };
-
     read = async () => {
         try {
             const all = await this.model.find().lean();
