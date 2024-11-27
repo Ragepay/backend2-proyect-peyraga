@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import { readByEmail, create } from "../data/mongo/managers/users.manager.js";
+import { readByEmail, create, readById } from "../data/mongo/managers/users.manager.js";
 import { createHashUtil, verifyHashUtil } from "../utils/hash.util.js";
 
 passport.use("register", new LocalStrategy(
@@ -59,6 +59,16 @@ passport.use("login", new LocalStrategy(
         };
     }
 ));
+
+passport.serializeUser((user, done) => {
+    done(null, user.id); // Guardamos el `id` en la sesión.
+});
+
+passport.deserializeUser((id, done) => {
+    readById(id, (err, user) => {
+        done(err, user); // Recuperamos el usuario completo.
+    });
+});
 
 
 export default passport;
