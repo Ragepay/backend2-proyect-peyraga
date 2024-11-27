@@ -32,7 +32,7 @@ app.listen(PORT, ready);
 // Middleware incorporados.
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(express.static("public"));
 // Middleware de Terceros.
 // Muestra por consola un registro de las solicitudes HTTPs (GET, POST, PUT, DELETE).
 app.use(morgan("dev"));
@@ -67,7 +67,7 @@ app.use(session({
     secret: process.env.SECRET_KEY,
     resave: true,
     saveUninitialized: true,
-    store: new MongoStore({ mongoUrl: process.env.MONGO_LINK, ttl: 60 * 60 * 24 }),
+    store: new MongoStore({ mongoUrl: process.env.MONGO_LINK, ttl: 60 * 60 * 24 }), // Default 14 dias.
 }));
 
 // Middleware de routers.

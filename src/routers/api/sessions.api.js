@@ -1,17 +1,20 @@
 import { Router } from "express";
 import { create, readByEmail, readById } from "../../data/mongo/managers/users.manager.js";
-import isVerifyPassword from "../../middlewares/isVerifyPassword.mid.js";
-import isUser from "../../middlewares/isUser.mid.js";
-import isValidUserData from "../../middlewares/isValidUserData.mid.js";
+//import isValidUser from "../../middlewares/isValidUser.mid.js";
+//import isUser from "../../middlewares/isUser.mid.js";
+//import isValidUserData from "../../middlewares/isValidUserData.mid.js";
+//import createHash from "../../middlewares/createHash.mid.js";
+//import verifyHash from "../../middlewares/verifyHash.mid.js";
+import passport from "../../middlewares/passport.mid.js";
 
 const sessionApiRouter = Router();
 
 
 // Registrar un usuario.
-sessionApiRouter.post("/register", isValidUserData, isUser, register);
+sessionApiRouter.post("/register", passport.authenticate("register", { session: false }), register);
 
 // Login de usuario.
-sessionApiRouter.post("/login", isVerifyPassword, login);
+sessionApiRouter.post("/login", passport.authenticate("login", { session: false }), login);
 
 // Signout de usuario.
 sessionApiRouter.post("/signout", signout);
@@ -19,16 +22,24 @@ sessionApiRouter.post("/signout", signout);
 // Online usuario.
 sessionApiRouter.post("/online", online);
 
+// Google oauth2.
+sessionApiRouter.post("/auth/google", (req, res, next) => {
+    res.send("Google oauth2")
+});
+
+// Google CallBack.
+sessionApiRouter.post("/auth/google/cb", (req, res, next) => {
+    res.send("Google oauth2 CALLBAKC")
+});
+
 export default sessionApiRouter;
 
 
 // Funciones Callbacks final de los endpoints de sessions.
 async function register(req, res, next) {
     try {
-        const message = "USER REGISTERED";
-        const data = req.body;
-        const one = await create(data);
-        return res.status(201).json({ message, one: one._id });
+        const user = req.user;
+        return res.status(201).json({ message: "USER CREATED.", user_id: user._id });
     } catch (error) {
         return next(error);
     };
@@ -36,14 +47,9 @@ async function register(req, res, next) {
 
 async function login(req, res, next) {
     try {
-        const { email } = req.body;
-        const user = await readByEmail(email);
-        req.session.online = true;
-        req.session.email = req.body.email;
-        req.session.role = user.role;
-        req.session.user_id = user._id;
+        const user = req.user;
         const message = "USER LOGGED IN";
-        return res.status(200).json({ message, user });
+        return res.status(200).json({ message, user_id: user._id });
     } catch (error) {
         return next(error);
     };
