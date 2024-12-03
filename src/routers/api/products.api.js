@@ -1,51 +1,85 @@
 import { Router } from "express";
-import { create, read, update, destroy } from "../../data/mongo/managers/products.manager.js";
+import { create, read, update, destroy, readById } from "../../data/mongo/managers/products.manager.js";
+import passport from "../../middlewares/passport.mid.js";
 
 const productsApiRouter = Router();
 
-// Metodos de llamada a la api products.
-productsApiRouter.get("/", async (req, res, next) => {
+// GET | Get all products. Public.
+productsApiRouter.get("/", getProducts);
+
+// GET | Get one product. Public.
+productsApiRouter.get("/:id", getOneProduct);
+
+// POST | Create Product. Private: Only Admins.
+productsApiRouter.post("/", /*passport.authenticate("admin", { session: false }),*/ createProduct);
+
+// PUT | Update Product. Private: Only Admins.
+productsApiRouter.put("/:id", /*passport.authenticate("admin", { session: false }),*/ updateProduct);
+
+// Delete | Delete Product. Private: Only Admins.
+productsApiRouter.delete("/:id", /*passport.authenticate("admin", { session: false }),*/ deleteProduct);
+
+// Function getProducts.
+async function getProducts(req, res, next) {
     try {
+        const token = req.token;
+        console.log(req.token);
         const message = "PRODUCTS FOUND.";
-        const response = await read();
-        return res.status(200).json({ response, message });
+        const products = await read();
+        return res.status(200).json({ message, products, token });
     } catch (error) {
         return next(error);
     };
-});
+};
 
-productsApiRouter.post("/", async (req, res, next) => {
+// Function getOneProduct.
+async function getOneProduct(req, res, next) {
+    try {
+        const { id } = req.params;
+        const message = "PRODUCT FOUND.";
+        const product = await readById(id);
+        return res.status(200).json({ message, product });
+    } catch (error) {
+        return next(error);
+    };
+
+}
+
+// Function creatProduct.
+async function createProduct(req, res, next) {
     try {
         const data = req.body;
         const message = "PRODUCTS CREATED";
-        const response = await create(data);
-        return res.status(201).json({ response, message });
+        const product = await create(data);
+        return res.status(201).json({ message, product });
     } catch (error) {
         return next(error);
     };
-});
+}
 
-productsApiRouter.put("/:id", async (req, res, next) => {
+// Function updateProduct.
+async function updateProduct(req, res, next) {
     try {
         const data = req.body;
         const { id } = req.params;
         const message = "PRODUCTS UPDATED";
-        const response = await update(id, data);
-        return res.status(201).json({ response, message });
+        const product = await update(id, data);
+        return res.status(201).json({ message, product });
     } catch (error) {
         return next(error);
     };
-});
+}
 
-productsApiRouter.delete("/:id", async (req, res, next) => {
+// Function deleteProduct.
+async function deleteProduct(req, res, next) {
     try {
         const { id } = req.params;
         const message = "PRODUCTS DELETED";
-        const response = await destroy(id);
-        return res.status(201).json({ response, message });
+        const product = await destroy(id);
+        return res.status(201).json({ message, product });
     } catch (error) {
         return next(error);
     };
-});
+}
 
 export default productsApiRouter;

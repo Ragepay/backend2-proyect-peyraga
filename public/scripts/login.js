@@ -15,8 +15,13 @@ BotonLogin.addEventListener("click", async (e) => {
         const URL = "/api/sessions/login"
         let response = await fetch(URL, options);
         response = await response.json();
-        localStorage.setItem("token", response.token);
-        alert(response.message);
+        if (response.token) {
+            localStorage.setItem("token", response.token);
+            location.replace("/");
+        } else {
+            alert(response.messsage);
+        }
+
     } catch (error) {
         alert(error.message);
     };

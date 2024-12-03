@@ -101,16 +101,17 @@ sessionApiRouter.post("/register", passport.authenticate("register", { session: 
 sessionApiRouter.post("/login", passport.authenticate("login", { session: false }), login);
 
 // Signout de usuario.
-sessionApiRouter.post("/signout", signout);
+sessionApiRouter.post("/signout", passport.authenticate("signout", { session: false }), signout);
 
 // Online usuario.
-sessionApiRouter.post("/online", online);
+sessionApiRouter.post("/online", passport.authenticate("online", { session: false }), online);
 
 // Online usuario con token jwt.
 sessionApiRouter.post("/onlineToken", onlineToken);
 
 // Google oauth2. Encargada de Autenticar
 sessionApiRouter.get("/auth/google", passport.authenticate("google", { scope: ["email", "profile"] }));
+
 // Google CallBack. Encargada de register/login con google.
 sessionApiRouter.get("/auth/google/cb", passport.authenticate("google", { session: false }), google);
 
@@ -130,7 +131,8 @@ async function register(req, res, next) {
 async function login(req, res, next) {
     try {
         //const user = req.user;
-        return res.status(200).json({ message: "USER LOGGED IN", token: req.token });
+        const token = req.token;
+        return res.status(200).json({ message: "USER LOGGED IN", token });
     } catch (error) {
         return next(error);
     };
@@ -176,7 +178,7 @@ async function onlineToken(req, res, next) {
     try {
         const { token } = req.headers;
         const data = verifyTokenUtil(token);
-        const user = await readById(data.user);
+        const user = await readById(data.user_id);
         if (user) {
             const message = user.email.toUpperCase() + " IS ONLINE";
             return res.status(200).json({ message, online: true });
