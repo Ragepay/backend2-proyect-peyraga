@@ -6,6 +6,7 @@ const collection = "users";
 const schema = new Schema({
     name: { type: String },
     email: { type: String, required: true, index: true, unique: true },
+    emailGoogle: { type: String },
     password: { type: String, required: true },
     role: { type: String, default: 'USER', enum: ['USER', "ADMIN", "PREM"] },
     verifyUser: { type: Boolean, default: false },

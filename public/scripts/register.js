@@ -21,3 +21,11 @@ BotonLogin.addEventListener("click", async (e) => {
         alert(error.message);
     };
 });
+
+const BotonLoginGoogle = document.querySelector("#google-register");
+
+BotonLoginGoogle.addEventListener("click", (e) => {
+    // Redirigir directamente al endpoint que manejará la autenticación
+    const URL = "http://localhost:9000/api/sessions/auth/google";
+    window.location.href = URL; // Redirige al usuario a Google para autenticarse
+});
