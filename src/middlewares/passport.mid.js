@@ -50,7 +50,7 @@ passport.use("login", new LocalStrategy(
     async (req, email, password, done) => {
         try {
             // Existencia de User con ese email
-            const user = await readByEmail(email);
+            let user = await readByEmail(email);
             if (!user) {
                 const error = new Error("USER NOT FOUND, INVALID EMAIL.");
                 error.statusCode = 401;
@@ -71,7 +71,7 @@ passport.use("login", new LocalStrategy(
             //req.session.email = req.body.email;
             //req.session.role = user.role;
             //req.session.user_id = user._id.toString();
-            await update(user.id, { isOnline: true });
+            user = await update(user._id, { isOnline: true });
             user.password = null;
             return done(null, user);
         } catch (error) {
@@ -124,10 +124,16 @@ passport.use("online", new LocalStrategy(
     async (req, email, password, done) => {
         try {
             // Consultar existencia del usuario.
-            const { token } = req.headers;
+            const { token } = req.token;
+            if (!token) {
+                const error = new Error("INVALID TOKEN.");
+                error.statusCode = 401;
+                return done(error);
+            }
             const { user_id } = verifyTokenUtil(token);
-            const { isOnline } = await readById(user_id);
-            if (isOnline) {
+            const user = await readById(user_id);
+            const { isOnline } = user;
+            if (!isOnline) {
                 const error = new Error("USER IS NOT ONLINE");
                 error.statusCode = 401;
                 return done(error);

@@ -127,9 +127,9 @@ async function register(req, res, next) {
 
 async function login(req, res, next) {
     try {
-        //const user = req.user;
+        const user = req.user;
         const token = req.token;
-        return res.status(200).json({ message: "USER LOGGED IN", token });
+        return res.status(200).json({ message: "USER LOGGED IN", token, isOnline: user.isOnline });
     } catch (error) {
         return next(error);
     };
