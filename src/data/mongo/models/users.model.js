@@ -10,7 +10,8 @@ const schema = new Schema({
     password: { type: String, required: true },
     role: { type: String, default: 'USER', enum: ['USER', "ADMIN", "PREM"] },
     verifyUser: { type: Boolean, default: false },
-    verifyCoder: { type: String, default: "1234" }
+    verifyCoder: { type: String, default: "1234" },
+    isOnline: { type: Boolean, default: false }
 });
 
 const Users = model(collection, schema);

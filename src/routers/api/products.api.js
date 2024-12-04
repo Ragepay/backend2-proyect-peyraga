@@ -11,7 +11,7 @@ productsApiRouter.get("/", getProducts);
 productsApiRouter.get("/:id", getOneProduct);
 
 // POST | Create Product. Private: Only Admins.
-productsApiRouter.post("/", /*passport.authenticate("admin", { session: false }),*/ createProduct);
+productsApiRouter.post("/", passport.authenticate("admin", { session: false }), createProduct);
 
 // PUT | Update Product. Private: Only Admins.
 productsApiRouter.put("/:id", /*passport.authenticate("admin", { session: false }),*/ updateProduct);

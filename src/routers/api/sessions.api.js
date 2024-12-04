@@ -106,9 +106,6 @@ sessionApiRouter.post("/signout", passport.authenticate("signout", { session: fa
 // Online usuario.
 sessionApiRouter.post("/online", passport.authenticate("online", { session: false }), online);
 
-// Online usuario con token jwt.
-sessionApiRouter.post("/onlineToken", onlineToken);
-
 // Google oauth2. Encargada de Autenticar
 sessionApiRouter.get("/auth/google", passport.authenticate("google", { scope: ["email", "profile"] }));
 
@@ -150,8 +147,9 @@ async function signout(req, res, next) {
 
 async function online(req, res, next) {
     try {
-        const { user_id } = req.session;
-        const user = await readById(user_id);
+        const { token } = req.headers;
+        const data = verifyTokenUtil(token);
+        const user = await readById(data.user_id);
         if (user) {
             const message = user.email.toUpperCase() + " IS ONLINE";
             return res.status(200).json({ message, online: true });
@@ -174,19 +172,3 @@ function google(req, res, next) {
     };
 }
 
-async function onlineToken(req, res, next) {
-    try {
-        const { token } = req.headers;
-        const data = verifyTokenUtil(token);
-        const user = await readById(data.user_id);
-        if (user) {
-            const message = user.email.toUpperCase() + " IS ONLINE";
-            return res.status(200).json({ message, online: true });
-        } else {
-            const message = "USER IS NOT ONLINE";
-            return res.status(400).json({ message, online: false });
-        }
-    } catch (error) {
-        return next(error);
-    };
-}

@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import { readByEmail, create, readById } from "../data/mongo/managers/users.manager.js";
+import { readByEmail, create, readById, update } from "../data/mongo/managers/users.manager.js";
 import { createHashUtil, verifyHashUtil } from "../utils/hash.util.js";
 import { Strategy as GoogleStrategy } from "passport-google-oauth2";
 import { createTokenUtil, verifyTokenUtil } from "../utils/token.util.js";
@@ -25,7 +25,7 @@ passport.use("register", new LocalStrategy(
             // Validacion de User
             if (one) {
                 const error = new Error("User already exists");
-                error.statusCode = 400;
+                error.statusCode = 401;
                 return done(error);
             }
             // Hasheo de contraseña y creacion de user.
@@ -44,6 +44,7 @@ passport.use("register", new LocalStrategy(
 // Busca el usuario por correo en al BBDD.
 // Verifica si la contraseña ingresada coinside con el hash almacenado.
 // Retorna el usuario si la utenticacion e exitosa.
+// Modificar isOnline en la base de datos.
 passport.use("login", new LocalStrategy(
     { passReqToCallback: true, usernameField: "email" },
     async (req, email, password, done) => {
@@ -70,6 +71,7 @@ passport.use("login", new LocalStrategy(
             //req.session.email = req.body.email;
             //req.session.role = user.role;
             //req.session.user_id = user._id.toString();
+            await update(user.id, { isOnline: true });
             user.password = null;
             return done(null, user);
         } catch (error) {
@@ -83,23 +85,34 @@ passport.use("login", new LocalStrategy(
 // Rechaza usuarios que no tengan permisos
 passport.use("admin", new LocalStrategy(
     { passReqToCallback: true, usernameField: "email" },
-    async (req, email, password, done) => {
+    async (req, done) => {
         try {
-            const token = req.token;
-            console.log(req.token);
+            const { token } = req.headers;
             const data = verifyTokenUtil(token);
+            const user = await readById(data.user_id);
             const { role } = data;
             if (role !== "ADMIN") {
                 const error = new Error("USER NOT FOUND, INVALID EMAIL.");
                 error.statusCode = 403;
                 return done(error);
             }
-            const user = await readById(data.user_id);
             user.password = null;
             return done(null, user);
         } catch (error) {
             return done(error);
         };
+        /*
+                const { token } = req.headers;
+                const data = verifyTokenUtil(token);
+                const user = await readById(data.user_id);
+                if (user) {
+                    const message = user.email.toUpperCase() + " IS ONLINE";
+                    return res.status(200).json({ message, online: true });
+                } else {
+                    const message = "USER IS NOT ONLINE";
+                    return res.status(400).json({ message, online: false });
+                
+                */
     }
 ));
 
@@ -110,7 +123,15 @@ passport.use("online", new LocalStrategy(
     { passReqToCallback: true, usernameField: "email" },
     async (req, email, password, done) => {
         try {
-
+            // Consultar existencia del usuario.
+            const { token } = req.headers;
+            const { user_id } = verifyTokenUtil(token);
+            const { isOnline } = await readById(user_id);
+            if (isOnline) {
+                const error = new Error("USER IS NOT ONLINE");
+                error.statusCode = 401;
+                return done(error);
+            }
             return done(null, user);
         } catch (error) {
             return done(error);
