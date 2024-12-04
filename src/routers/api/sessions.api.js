@@ -164,9 +164,13 @@ async function online(req, res, next) {
 
 function google(req, res, next) {
     try {
-        //const user = req.user;
-        //return res.redirect("/index.html")
-        return res.status(200).json({ message: "Logged in with Google", token: req.token });
+
+        //  Respuesta para dejar el token en una cokkie.
+        //const { token } = req.user;
+        //return res.status(201).cookie("token", token).redirect("/index.html");
+        //  Respuesta que devuelve el req.user
+        const user = req.user;
+        return res.status(200).json({ message: "Logged in with Google", user });
     } catch (error) {
         return next(error);
     };

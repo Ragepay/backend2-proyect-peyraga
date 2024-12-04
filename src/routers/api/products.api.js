@@ -14,10 +14,10 @@ productsApiRouter.get("/:id", getOneProduct);
 productsApiRouter.post("/", passport.authenticate("admin", { session: false }), createProduct);
 
 // PUT | Update Product. Private: Only Admins.
-productsApiRouter.put("/:id", /*passport.authenticate("admin", { session: false }),*/ updateProduct);
+productsApiRouter.put("/:id", passport.authenticate("admin", { session: false }), updateProduct);
 
 // Delete | Delete Product. Private: Only Admins.
-productsApiRouter.delete("/:id", /*passport.authenticate("admin", { session: false }),*/ deleteProduct);
+productsApiRouter.delete("/:id", passport.authenticate("admin", { session: false }), deleteProduct);
 
 // Function getProducts.
 async function getProducts(req, res, next) {

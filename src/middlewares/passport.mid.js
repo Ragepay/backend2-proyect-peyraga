@@ -1,9 +1,13 @@
 import passport from "passport";
+// Estrategias de passport
 import { Strategy as LocalStrategy } from "passport-local";
-import { readByEmail, create, readById, update } from "../data/mongo/managers/users.manager.js";
-import { createHashUtil, verifyHashUtil } from "../utils/hash.util.js";
 import { Strategy as GoogleStrategy } from "passport-google-oauth2";
-import { createTokenUtil, verifyTokenUtil } from "../utils/token.util.js";
+import { Strategy as CustomStrategy } from "passport-custom";
+// Service de users.
+import { readByEmail, create, readById, update } from "../data/mongo/managers/users.manager.js";
+// Utils
+import { createHashUtil, verifyHashUtil } from "../utils/hash.util.js"; // Hash Contraeña
+import { createTokenUtil, verifyTokenUtil } from "../utils/token.util.js"; // Tokens 
 
 
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIRECT_URI } = process.env
@@ -65,7 +69,8 @@ passport.use("login", new LocalStrategy(
             }
             req.token = createTokenUtil({
                 role: user.role,
-                user_id: user._id
+                user_id: user._id,
+                email: user.email
             });
             //req.session.online = true;
             //req.session.email = req.body.email;
@@ -83,8 +88,7 @@ passport.use("login", new LocalStrategy(
 // Estrategia de Admin.
 // Similar a un login , pero adicionalmente verifica si el usuario tiene un rol administrativo.
 // Rechaza usuarios que no tengan permisos
-passport.use("admin", new LocalStrategy(
-    { passReqToCallback: true, usernameField: "email" },
+passport.use("admin", new CustomStrategy(
     async (req, done) => {
         try {
             const { token } = req.headers;
@@ -92,7 +96,7 @@ passport.use("admin", new LocalStrategy(
             const user = await readById(data.user_id);
             const { role } = data;
             if (role !== "ADMIN") {
-                const error = new Error("USER NOT FOUND, INVALID EMAIL.");
+                const error = new Error("ACCESS DENIED: User does not have ADMIN privileges.");
                 error.statusCode = 403;
                 return done(error);
             }
@@ -116,6 +120,7 @@ passport.use("admin", new LocalStrategy(
     }
 ));
 
+// NO FUNCIONA CON PASSPOR LOCAL, necesito passordf y email.
 // Estrategia de Online.
 // Valida al usuario mediante credenciales locales.
 // Puede servir para controlar el estado de tiempo real de usuarios conectados en la aplicacion.
@@ -145,6 +150,7 @@ passport.use("online", new LocalStrategy(
     }
 ));
 
+// NO FUNCIONA CON PASSPOR LOCAL, necesito passordf y email.
 // Estrategia de Signout.
 // Invalida tokens o sesiones activas.
 // Retorna un estado que la operacion fue exitosa.
@@ -191,31 +197,17 @@ passport.use("google", new GoogleStrategy(
                 };
                 user = await create(user);
             }
-            req.token = createTokenUtil({
+            const token = createTokenUtil({
                 role: user.role,
-                user: user._id
+                user: user._id,
+                email: user.email
             });
-            //req.session.email = user.email;
-            //req.session.role = user.role;
-            //req.session.online = true;
-            //req.session.user_id = user._id.toString();
-            return done(null, user);
+            req.token = token;
+            return done(null, { user, token },);
         } catch (error) {
             return done(error);
         };
     }
 ));
-
-/*
-passport.serializeUser((user, done) => {
-    done(null, user.id); // Guardamos el `id` en la sesión.
-});
-
-passport.deserializeUser((id, done) => {
-    readById(id, (err, user) => {
-        done(err, user); // Recuperamos el usuario completo.
-    });
-});
-*/
 
 export default passport;
