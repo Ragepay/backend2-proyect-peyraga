@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { create, read, update, destroy, readById } from "../../data/mongo/managers/products.manager.js";
-
 import passportCB from "../../middlewares/passportCB.mid.js";
+
 
 const productsApiRouter = Router();
 // Endpóints de products.-------------------------------------------------------------------------------------------
