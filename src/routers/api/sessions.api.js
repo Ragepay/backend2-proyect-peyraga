@@ -110,45 +110,25 @@ sessionApiRouter.get("/auth/google", passport.authenticate("google", { scope: ["
 sessionApiRouter.get("/auth/google/cb", passport.authenticate("google", { session: false }), google);
 
 // Funciones Callbacks final de los endpoints de sessions.
-async function register(req, res, next) {
+function register(req, res, next) {
     try {
         const user = req.user;
-        return res.status(201).json({ message: "USER CREATED.", user });
+        return res.status(201).json({ message: `USER ${user.email} CREATED.`, user });
     } catch (error) {
         return next(error);
     };
 }
 
-async function login(req, res, next) {
+function login(req, res, next) {
     try {
-        const { user } = req.user;
+        // Extraemos el token del objt req.token.
         const token = req.token;
-        const { isOnline } = user;
-        return res.status(200).json({ message: "USER LOGGED IN", token, isOnline });
-    } catch (error) {
-        return next(error);
-    };
-}
-
-async function signout(req, res, next) {
-    try {
+        // Opciones para la cookie que almacenara el token. Duracion 7 dias y con seguridad httpOnly.
+        const opts = { maxAge: 60 * 60 * 24 * 7, httpOnly: true };
+        // Obtenemos user de req.user.
         const user = req.user;
-        return res.status(200).json({ message: "USER SIGNED OUT", user });
-    } catch (error) {
-        return next(error);
-    };
-}
-
-async function online(req, res, next) {
-    try {
-        const { user } = req.user;
-        if (user) {
-            const message = user.email.toUpperCase() + " IS ONLINE";
-            return res.status(200).json({ message, isOnline: true });
-        } else {
-            const message = "USER IS NOT ONLINE";
-            return res.status(400).json({ message, isOline: false });
-        }
+        // Creamos la cookie. Y respondemos.
+        return res.status(200).cookie("token", token, opts).json({ message: `USER ${user.email} LOGGED IN.`, user, token });
     } catch (error) {
         return next(error);
     };
@@ -156,13 +136,36 @@ async function online(req, res, next) {
 
 function google(req, res, next) {
     try {
+        // Extraemos el token del objt req.token.
+        const token = req.token;
+        // Opciones para la cookie que almacenara el token. Duracion 7 dias y con seguridad httpOnly.
+        const opts = { maxAge: 60 * 60 * 24 * 7, httpOnly: true };
+        // Creamos la cookie. Y respondemos.
+        return res.status(200).cookie("token", token, opts).redirect("/index.html");
+    } catch (error) {
+        return next(error);
+    };
+}
 
-        //  Respuesta para dejar el token en una cokkie.
-        //const { token } = req.user;
-        //return res.status(201).cookie("token", token).redirect("/index.html");
-        //  Respuesta que devuelve el req.user
-        const user = req.user;
-        return res.status(200).json({ message: "Logged in with Google", user });
+function signout(req, res, next) {
+    try {
+        // Extraemos el token del objt req.token.
+        const token = req.token;
+        // Opciones para la cookie que almacenara el token. Duracion 7 dias y con seguridad httpOnly.
+        const opts = { maxAge: 60 * 60 * 24 * 7, httpOnly: true };
+        // Creamos la cookie. Y respondemos.
+        return res.status(200).cookie("token", token, opts).redirect("/index.html");
+    } catch (error) {
+        return next(error);
+    };
+}
+
+function online(req, res, next) {
+    try {
+        return res.status(200).json({
+            message: req.user.email.toUpperCase() + " IS ONLINE.",
+            online: true
+        })
     } catch (error) {
         return next(error);
     };

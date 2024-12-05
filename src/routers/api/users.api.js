@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { read, update, destroy, readById } from "../../data/mongo/managers/users.manager.js";
 import passport from "../../middlewares/passport.mid.js";
+import { createHashUtil } from "../../utils/hash.util.js";
 
 const usersApiRouter = Router();
 
@@ -58,6 +59,9 @@ async function updateUser(req, res, next) {
     try {
         const { id } = req.params;
         const data = req.body;
+        if (data.password) {
+            data.password = createHashUtil(data.password);
+        }
         const message = "USERS UPDATED.";
         const user = await update(id, data);
         return res.status(200).json({ message, user });

@@ -34,3 +34,18 @@ BotonLoginGoogle.addEventListener("click", (e) => {
     const URL = "http://localhost:9000/api/sessions/auth/google";
     window.location.href = URL; // Redirige al usuario a Google para autenticarse
 });
+
+/*
+
+const url = "http://localhost:8080/api/sessions/online";
+const opts = {
+ method: "POST",
+ headers: {
+   "Content-Type": "application/json",
+   Authorization: "Bearer " + token,
+ },
+};
+let response = await fetch(url, opts);
+response = await response.json();
+
+*/
