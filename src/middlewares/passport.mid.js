@@ -37,7 +37,7 @@ passport.use("register", new LocalStrategy(
             const data = req.body;
             const user = await create(data);
             user.password = null;
-            return done(null, user);
+            return done(null, { user, token: "" });
         } catch (error) {
             return done(error);
         };
@@ -67,18 +67,15 @@ passport.use("login", new LocalStrategy(
                 error.statusCode = 401;
                 return done(error);
             }
-            req.token = createTokenUtil({
+            const token = createTokenUtil({
                 role: user.role,
                 user_id: user._id,
                 email: user.email
             });
-            //req.session.online = true;
-            //req.session.email = req.body.email;
-            //req.session.role = user.role;
-            //req.session.user_id = user._id.toString();
+            req.token = token;
             user = await update(user._id, { isOnline: true });
             user.password = null;
-            return done(null, user);
+            return done(null, { user, token });
         } catch (error) {
             return done(error);
         };
@@ -92,6 +89,7 @@ passport.use("admin", new CustomStrategy(
     async (req, done) => {
         try {
             const { token } = req.headers;
+            req.token = token;
             const data = verifyTokenUtil(token);
             const user = await readById(data.user_id);
             const { role } = data;
@@ -101,22 +99,11 @@ passport.use("admin", new CustomStrategy(
                 return done(error);
             }
             user.password = null;
-            return done(null, user);
+            return done(null, { user, token });
         } catch (error) {
             return done(error);
         };
-        /*
-                const { token } = req.headers;
-                const data = verifyTokenUtil(token);
-                const user = await readById(data.user_id);
-                if (user) {
-                    const message = user.email.toUpperCase() + " IS ONLINE";
-                    return res.status(200).json({ message, online: true });
-                } else {
-                    const message = "USER IS NOT ONLINE";
-                    return res.status(400).json({ message, online: false });
-                
-                */
+
     }
 ));
 
@@ -124,17 +111,17 @@ passport.use("admin", new CustomStrategy(
 // Estrategia de Online.
 // Valida al usuario mediante credenciales locales.
 // Puede servir para controlar el estado de tiempo real de usuarios conectados en la aplicacion.
-passport.use("online", new LocalStrategy(
-    { passReqToCallback: true, usernameField: "email" },
-    async (req, email, password, done) => {
+passport.use("online", new CustomStrategy(
+    async (req, done) => {
         try {
             // Consultar existencia del usuario.
-            const { token } = req.token;
+            const { token } = req.headers;
             if (!token) {
                 const error = new Error("INVALID TOKEN.");
                 error.statusCode = 401;
                 return done(error);
             }
+            req.token = token;
             const { user_id } = verifyTokenUtil(token);
             const user = await readById(user_id);
             const { isOnline } = user;
@@ -143,7 +130,7 @@ passport.use("online", new LocalStrategy(
                 error.statusCode = 401;
                 return done(error);
             }
-            return done(null, user);
+            return done(null, { user, token });
         } catch (error) {
             return done(error);
         };
@@ -154,18 +141,23 @@ passport.use("online", new LocalStrategy(
 // Estrategia de Signout.
 // Invalida tokens o sesiones activas.
 // Retorna un estado que la operacion fue exitosa.
-passport.use("signout", new LocalStrategy(
-    { passReqToCallback: true, usernameField: "email" },
-    async (req, email, password, done) => {
+passport.use("signout", new CustomStrategy(
+    async (req, done) => {
         try {
-            const token = req.token;
+            const { token } = req.headers;
+            
             if (!token) {
                 const error = new Error("USER NOT LOGGED");
                 error.statusCode = 401;
                 return done(error);
             }
+            const { user_id } = verifyTokenUtil(token);
+            let user = await readById(user_id);
+            user = await update(user_id, { isOnline: false });
+            delete req.headers.token;
             delete req.token;
-            return done(null, null);
+            user = {};
+            return done(null, user);
         } catch (error) {
             return done(error);
         };

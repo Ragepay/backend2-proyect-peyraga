@@ -1,19 +1,12 @@
-import { Router } from "express";
-import { create, readByEmail, readById } from "../../data/mongo/managers/users.manager.js";
-import passport from "../../middlewares/passport.mid.js";
-import { verifyTokenUtil } from "../../utils/token.util.js";
-
-//import isValidUser from "../../middlewares/isValidUser.mid.js";
-//import isUser from "../../middlewares/isUser.mid.js";
-//import isValidUserData from "../../middlewares/isValidUserData.mid.js";
-//import createHash from "../../middlewares/createHash.mid.js";
-//import verifyHash from "../../middlewares/verifyHash.mid.js";
-
-const sessionApiRouter = Router();
-
 /*
 // Google oauth sin passport.
+import isValidUser from "../../middlewares/isValidUser.mid.js";
+import isUser from "../../middlewares/isUser.mid.js";
+import isValidUserData from "../../middlewares/isValidUserData.mid.js";
+import createHash from "../../middlewares/createHash.mid.js";
+import verifyHash from "../../middlewares/verifyHash.mid.js";
 import axios from "axios";
+
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const REDIRECT_URI = process.env.REDIRECT_URI;
@@ -93,6 +86,10 @@ sessionApiRouter.get("/auth/google/cb", async (req, res, next) => {
     }
 });
 */
+import { Router } from "express";
+import passport from "../../middlewares/passport.mid.js";
+
+const sessionApiRouter = Router();
 
 // Registrar un usuario.
 sessionApiRouter.post("/register", passport.authenticate("register", { session: false }), register);
@@ -112,14 +109,11 @@ sessionApiRouter.get("/auth/google", passport.authenticate("google", { scope: ["
 // Google CallBack. Encargada de register/login con google.
 sessionApiRouter.get("/auth/google/cb", passport.authenticate("google", { session: false }), google);
 
-
-export default sessionApiRouter;
-
-
 // Funciones Callbacks final de los endpoints de sessions.
 async function register(req, res, next) {
     try {
-        return res.status(201).json({ message: "USER CREATED." });
+        const user = req.user;
+        return res.status(201).json({ message: "USER CREATED.", user });
     } catch (error) {
         return next(error);
     };
@@ -127,9 +121,10 @@ async function register(req, res, next) {
 
 async function login(req, res, next) {
     try {
-        const user = req.user;
+        const { user } = req.user;
         const token = req.token;
-        return res.status(200).json({ message: "USER LOGGED IN", token, isOnline: user.isOnline });
+        const { isOnline } = user;
+        return res.status(200).json({ message: "USER LOGGED IN", token, isOnline });
     } catch (error) {
         return next(error);
     };
@@ -137,9 +132,8 @@ async function login(req, res, next) {
 
 async function signout(req, res, next) {
     try {
-        const session = req.session;
-        req.session.destroy();
-        return res.status(200).json({ message: "USER SIGNED OUT", session });
+        const user = req.user;
+        return res.status(200).json({ message: "USER SIGNED OUT", user });
     } catch (error) {
         return next(error);
     };
@@ -147,15 +141,13 @@ async function signout(req, res, next) {
 
 async function online(req, res, next) {
     try {
-        const { token } = req.headers;
-        const data = verifyTokenUtil(token);
-        const user = await readById(data.user_id);
+        const { user } = req.user;
         if (user) {
             const message = user.email.toUpperCase() + " IS ONLINE";
-            return res.status(200).json({ message, online: true });
+            return res.status(200).json({ message, isOnline: true });
         } else {
             const message = "USER IS NOT ONLINE";
-            return res.status(400).json({ message, online: false });
+            return res.status(400).json({ message, isOline: false });
         }
     } catch (error) {
         return next(error);
@@ -175,4 +167,7 @@ function google(req, res, next) {
         return next(error);
     };
 }
+
+export default sessionApiRouter;
+
 
