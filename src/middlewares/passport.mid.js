@@ -137,7 +137,7 @@ passport.use("google", new GoogleStrategy(
 // Similar a un login , pero adicionalmente verifica si el usuario tiene un rol administrativo.
 // Rechaza usuarios que no tengan permisos
 passport.use("admin", new JwtStrategy({
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    jwtFromRequest: ExtractJwt.fromExtractors([(req => req?.cookies?.token)]),
     secretOrKey: SECRET_KEY
 }, async (data, done) => {
     try {
@@ -165,7 +165,7 @@ passport.use("admin", new JwtStrategy({
 // Puede servir para controlar el estado de tiempo real de usuarios conectados en la aplicacion.
 //  JWT-passport
 passport.use("online", new JwtStrategy({
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    jwtFromRequest: ExtractJwt.fromExtractors([(req => req?.cookies?.token)]),
     secretOrKey: SECRET_KEY
 }, async (data, done) => {
     try {
@@ -195,7 +195,7 @@ passport.use("online", new JwtStrategy({
 // Invalida tokens o sesiones activas.
 // Retorna un estado que la operacion fue exitosa.
 passport.use("signout", new JwtStrategy({
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    jwtFromRequest: ExtractJwt.fromExtractors([(req => req?.cookies?.token)]),
     secretOrKey: SECRET_KEY
 }, async (data, done) => {
     try {

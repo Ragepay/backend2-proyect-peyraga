@@ -128,7 +128,7 @@ function login(req, res, next) {
         // Obtenemos user de req.user.
         const user = req.user;
         // Creamos la cookie. Y respondemos.
-        return res.status(200).cookie("token", token, opts).json({ message: `USER ${user.email} LOGGED IN.`, user, token });
+        return res.status(200).cookie("token", token, opts).json({ status: true });
     } catch (error) {
         return next(error);
     };
@@ -141,7 +141,7 @@ function google(req, res, next) {
         // Opciones para la cookie que almacenara el token. Duracion 7 dias y con seguridad httpOnly.
         const opts = { maxAge: 60 * 60 * 24 * 7, httpOnly: true };
         // Creamos la cookie. Y respondemos.
-        return res.status(200).cookie("token", token, opts).redirect("/index.html");
+        return res.status(200).cookie("token", token, opts).redirect("/");
     } catch (error) {
         return next(error);
     };
@@ -149,12 +149,19 @@ function google(req, res, next) {
 
 function signout(req, res, next) {
     try {
-        // Extraemos el token del objt req.token.
-        const token = req.token;
-        // Opciones para la cookie que almacenara el token. Duracion 7 dias y con seguridad httpOnly.
-        const opts = { maxAge: 60 * 60 * 24 * 7, httpOnly: true };
-        // Creamos la cookie. Y respondemos.
-        return res.status(200).cookie("token", token, opts).redirect("/index.html");
+        /*
+             // Extraemos el token del objt req.token.
+            req.token = finishTokenUtil({
+                user: req.user
+            })
+            const token = req.token;
+            // Opciones para la cookie que almacenara el token. Duracion 7 dias y con seguridad httpOnly.
+            const opts = { maxAge: 60 * 60 * 24 * 7, httpOnly: true };
+            // Creamos la cookie. Y respondemos.
+            return res.status(200).Cookie("token", token, opts).redirect("/index.html");
+        */
+
+        return res.status(200).clearCookie("token").json({message:"USER SIGN OUT."});
     } catch (error) {
         return next(error);
     };

@@ -9,7 +9,8 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 //import sessionFileStore from 'session-file-store';
 import MongoStore from "connect-mongo";
-
+import { __dirname } from "./utils.js";
+import handlebars from 'express-handlebars';
 
 /* INICIALIZACION DE SERVER BASICO */
 //------------------------------------------------------------------------------------
@@ -28,6 +29,10 @@ app.listen(PORT, ready);
 
 /*          MIDDLEWARES            */
 //------------------------------------------------------------------------------------
+//  Handlebars.
+app.engine('handlebars', handlebars.engine());
+app.set('views', __dirname + '/src/views');
+app.set('view engine', 'handlebars');
 
 // Middleware incorporados.
 app.use(express.json());
