@@ -1,3 +1,4 @@
+
 /*
 // Google oauth sin passport.
 import isValidUser from "../../middlewares/isValidUser.mid.js";
@@ -86,30 +87,31 @@ sessionApiRouter.get("/auth/google/cb", async (req, res, next) => {
     }
 });
 */
+
 import { Router } from "express";
-import passport from "../../middlewares/passport.mid.js";
+import passportCB from "../../middlewares/passportCB.mid.js";
 
 const sessionApiRouter = Router();
-
+// Endpóints de Sessions.-------------------------------------------------------------------------------------------
 // Registrar un usuario.
-sessionApiRouter.post("/register", passport.authenticate("register", { session: false }), register);
+sessionApiRouter.post("/register", passportCB("register"), register);
 
 // Login de usuario.
-sessionApiRouter.post("/login", passport.authenticate("login", { session: false }), login);
+sessionApiRouter.post("/login", passportCB("login"), login);
 
 // Signout de usuario.
-sessionApiRouter.post("/signout", passport.authenticate("signout", { session: false }), signout);
+sessionApiRouter.post("/signout", passportCB("signout"), signout);
 
 // Online usuario.
-sessionApiRouter.post("/online", passport.authenticate("online", { session: false }), online);
+sessionApiRouter.post("/online", passportCB("online"), online);
 
 // Google oauth2. Encargada de Autenticar
-sessionApiRouter.get("/auth/google", passport.authenticate("google", { scope: ["email", "profile"] }));
+sessionApiRouter.get("/auth/google", passportCB("google"));
 
 // Google CallBack. Encargada de register/login con google.
-sessionApiRouter.get("/auth/google/cb", passport.authenticate("google", { session: false }), google);
+sessionApiRouter.get("/auth/google/cb", passportCB("google"), google);
 
-// Funciones Callbacks final de los endpoints de sessions.
+// Funciones Callbacks final de los endpoints de sessions.----------------------------------------------------------
 function register(req, res, next) {
     try {
         const user = req.user;
@@ -161,7 +163,7 @@ function signout(req, res, next) {
             return res.status(200).Cookie("token", token, opts).redirect("/index.html");
         */
 
-        return res.status(200).clearCookie("token").json({message:"USER SIGN OUT."});
+        return res.status(200).clearCookie("token").json({ message: "USER SIGN OUT." });
     } catch (error) {
         return next(error);
     };

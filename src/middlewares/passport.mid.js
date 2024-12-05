@@ -26,9 +26,8 @@ passport.use("register", new LocalStrategy(
             const existUser = await readByEmail(email);
             // Validacion de User
             if (existUser) {
-                const error = new Error("User already exists");
-                error.statusCode = 401;
-                return done(error);
+                const info = { message: "USER ALREADY EXISTS.", statusCode: 401 }
+                return done(null, false, info);
             }
             // Hasheo de contraseña y creacion de user.
             req.body.password = createHashUtil(password);
@@ -55,9 +54,8 @@ passport.use("login", new LocalStrategy(
             let user = await readByEmail(email);
             // SI no existe, la respuesta.
             if (!user) {
-                const error = new Error("USER NOT FOUND, INVALID EMAIL.");
-                error.statusCode = 401;
-                return done(error);
+                const info = { message: "USER NOT FOUND, INVALID EMAIL.", statusCode: 401 }
+                return done(null, false, info);
             }
             // Obtenemos la contraseña hasheada dentro de la Base de datos.
             const dbPassword = user.password;
@@ -65,9 +63,8 @@ passport.use("login", new LocalStrategy(
             const verify = verifyHashUtil(password, dbPassword);
             // Si no es compatible, la respuesta.
             if (!verify) {
-                const error = new Error("INVALID PASSWORD");
-                error.statusCode = 401;
-                return done(error);
+                const info = { message: "INVALID PASSWORD", statusCode: 401 }
+                return done(null, false, info);
             }
             // Creamos el token, con la informacion que queramos.
             const token = createTokenUtil({
@@ -147,9 +144,8 @@ passport.use("admin", new JwtStrategy({
         const { role } = data;
         // Si es distinto a "ADMIN", respuesta. Si es igual, lo deja pasar.
         if (role !== "ADMIN") {
-            const error = new Error("ACCESS DENIED: User does not have ADMIN privileges.");
-            error.statusCode = 403;
-            return done(error);
+            const info = { message: "ACCESS DENIED: User does not have ADMIN privileges.", statusCode: 403 }
+            return done(null, false, info);
         }
         // Devolvemos user en el objeto req.user.
         return done(null, user);
@@ -177,9 +173,8 @@ passport.use("online", new JwtStrategy({
         const { isOnline } = user;
         // Si es false, respuesta.
         if (!isOnline) {
-            const error = new Error("USER IS NOT ONLINE");
-            error.statusCode = 401;
-            return done(error);
+            const info = { message: "USER IS NOT ONLINE", statusCode: 401 }
+            return done(null, false, info);
         }
         // Devolvemos user en el objeto req.user.
         return done(null, user);

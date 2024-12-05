@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { create, read, update, destroy, readById } from "../../data/mongo/managers/products.manager.js";
-import passport from "../../middlewares/passport.mid.js";
+
+import passportCB from "../../middlewares/passportCB.mid.js";
 
 const productsApiRouter = Router();
-
+// Endpóints de products.-------------------------------------------------------------------------------------------
 // GET | Get all products. Public.
 productsApiRouter.get("/", getProducts);
 
@@ -11,14 +12,15 @@ productsApiRouter.get("/", getProducts);
 productsApiRouter.get("/:id", getOneProduct);
 
 // POST | Create Product. Private: Only Admins.
-productsApiRouter.post("/", passport.authenticate("admin", { session: false }), createProduct);
+productsApiRouter.post("/", passportCB("admin"), createProduct);
 
 // PUT | Update Product. Private: Only Admins.
-productsApiRouter.put("/:id", passport.authenticate("admin", { session: false }), updateProduct);
+productsApiRouter.put("/:id", passportCB("admin"), updateProduct);
 
 // Delete | Delete Product. Private: Only Admins.
-productsApiRouter.delete("/:id", passport.authenticate("admin", { session: false }), deleteProduct);
+productsApiRouter.delete("/:id", passportCB("admin"), deleteProduct);
 
+// Funciones CallBacks.---------------------------------------------------------------------------------------------
 // Function getProducts.
 async function getProducts(req, res, next) {
     try {

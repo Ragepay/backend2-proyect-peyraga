@@ -1,25 +1,25 @@
 import { Router } from "express";
 import { read, update, destroy, readById } from "../../data/mongo/managers/users.manager.js";
-import passport from "../../middlewares/passport.mid.js";
 import { createHashUtil } from "../../utils/hash.util.js";
+import passportCB from "../../middlewares/passportCB.mid.js";
 
 const usersApiRouter = Router();
 
 // ENDPOINTS -----------------------------------------------------------
 // GET | Get all users. Private.
-usersApiRouter.get("/", getUsers);
+usersApiRouter.get("/", passportCB("admin"), getUsers);
 
 // GET | Get one user. Private.
 usersApiRouter.get("/:id", getOneUser);
 
 // POST | Create user. Private.              UTILIZAR EL REGISTER DE SESSION
-usersApiRouter.post("/", passport.authenticate("register", { session: false }), createUser);
+usersApiRouter.post("/", passportCB("register"), createUser);
 
 // PUT | Update user. Private.
-usersApiRouter.put("/:id", updateUser);
+usersApiRouter.put("/:id", passportCB("admin"), updateUser);
 
 // DELETE | Delete user. Private.
-usersApiRouter.delete("/:id", deleteUser);
+usersApiRouter.delete("/:id", passportCB("admin"), deleteUser);
 
 // FUNCIONES -----------------------------------------------------------
 // Function getUsers.
@@ -81,8 +81,5 @@ async function deleteUser(req, res, next) {
         return next(error);
     };
 };
-
-
-
 
 export default usersApiRouter;
