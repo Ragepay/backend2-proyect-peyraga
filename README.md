@@ -20,19 +20,22 @@ Este proyecto es una aplicación backend construida con Node.js y Express. Integ
     - `passportCB.mid.js`
     - `validateUserData.mid.js`
   - **routers/**: Rutas API organizadas por recursos.
-    - `carts.api.js`
-    - `products.api.js`
-    - `sessions.api.js`
-    - `users.api.js`
-  - **views/**: Plantillas Handlebars.
-    - **layouts/**
-      - `main.handlebars`: Layout principal.
-    - **partials/**: Componentes reutilizables.
-    - **pages/**: Plantillas individuales.
-      - `home.handlebars`
-      - `login.handlebars`
-      - `register.handlebars`
+    - **api/**: Rutas principales.
+        - `carts.api.js`
+        - `cookies.api.js`
+        - `products.api.js`
+        - `sessions.api.js`
+        - `users.api.js`
+    - **views/**: Plantillas Handlebars.
+        - **layouts/**
+        - `main.handlebars`: Layout principal.
+        - **pages/**: Plantillas individuales.
+        - `home.handlebars`
+        - `login.handlebars`
+        - `register.handlebars`
   - **utils/**: Utilidades y funciones comunes.
+    - `CustomRouter.util.js`
+    - `dbConnect.util.js`
     - `hash.util.js`
     - `token.util.js`
 
@@ -59,11 +62,11 @@ El proyecto utiliza las siguientes dependencias principales:
     Configura el archivo .env con las variables necesarias:
 
 3. Crea el archivo .env
-    PORT=
-    MONGO_LINK=
-    SECRET_KEY=
-    GOOGLE_CLIENT_ID=
-    GOOGLE_CLIENT_SECRET=
+    PORT=<puerto>
+    MONGO_LINK=<tu_mongo_link>
+    SECRET_KEY=<clave_secreta_para_hash_y_otras_cosas>
+    GOOGLE_CLIENT_ID=<GOOGLE_CLIENT_ID>
+    GOOGLE_CLIENT_SECRET=<GOOGLE_CLIENT_SECRET>
     REDIRECT_URI="http://localhost:9000/api/sessions/auth/google/cb"
     TOKEN_URL ="https://oauth2.googleapis.com/token"
 
