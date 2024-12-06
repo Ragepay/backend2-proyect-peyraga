@@ -7,14 +7,14 @@ Este proyecto es una aplicación backend construida con Node.js y Express. Integ
 - **public/**: Archivos estáticos como imágenes y estilos.
 - **src/**: Contiene la lógica principal del proyecto.
   - **data/**: Datos estáticos o temporales utilizados por la aplicación.
-  - **managers/**: Clases o módulos para manejar datos de productos, usuarios y carritos.
-    - `carts.manager.js`
-    - `products.manager.js`
-    - `users.manager.js`
-  - **models/**: Modelos de Mongoose para las colecciones.
-    - `cart.model.js`
-    - `product.model.js`
-    - `user.model.js`
+    - **managers/**: Clases o módulos para manejar datos de productos, usuarios y carritos.
+        - `carts.manager.js`
+        - `products.manager.js`
+        - `users.manager.js`
+    - **models/**: Modelos de Mongoose para las colecciones.
+        - `cart.model.js`
+        - `product.model.js`
+        - `user.model.js`
   - **middlewares/**: Middlewares personalizados para la aplicación.
     - `createHash.mid.js`
     - `passportCB.mid.js`
