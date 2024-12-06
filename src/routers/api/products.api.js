@@ -26,7 +26,7 @@ class ProductsApiRouter extends CustomRouter {
 // Function getProducts.
 async function getProducts(req, res, next) {
     const message = "PRODUCTS FOUND.";
-    const products = await read();
+    const product = await read();
     return res.status(200).json({ message, product });
 };
 

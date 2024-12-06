@@ -3,7 +3,6 @@ import { read, update, destroy, readById } from "../../data/mongo/managers/users
 import { createHashUtil } from "../../utils/hash.util.js";
 import passportCB from "../../middlewares/passportCB.mid.js";
 
-
 class UsersApiRouter extends CustomRouter {
     constructor() {
         super(/*No necesito pasarle paramaetros a la clas de CustomRouter */);

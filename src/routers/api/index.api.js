@@ -1,14 +1,9 @@
-//import { Router } from "express";
 import productsApiRouter from "./products.api.js";
 import cookieApiRouter from "./cookies.api.js";
 import sessionApiRouter from "./sessions.api.js";
 import usersApiRouter from "./users.api.js";
-import CustomRouter from "../../utils/CustomRouter.util.js";
 import cartsApiRouter from "./carts.api.js";
-
-
-
-
+import CustomRouter from "../../utils/CustomRouter.util.js";
 
 class ApiRouter extends CustomRouter {
     constructor() {
@@ -26,16 +21,14 @@ class ApiRouter extends CustomRouter {
 }
 
 let apiRouter = new ApiRouter();
-apiRouter = apiRouter.getRouter();
+export default apiRouter.getRouter();
 
 /*
+//import { Router } from "express";
 const apiRouter = Router();
 
 apiRouter.use("/products", productsApiRouter);
 apiRouter.use("/cookies", cookieApiRouter );
 apiRouter.use("/sessions", sessionApiRouter);
 apiRouter.use("/users", usersApiRouter);
-
 */
-
-export default apiRouter;
