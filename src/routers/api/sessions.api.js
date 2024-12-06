@@ -1,3 +1,114 @@
+import CustomRouter from "../../utils/CustomRouter.util.js";
+import passportCB from "../../middlewares/passportCB.mid.js";
+
+class SessionApiRouter extends CustomRouter {
+    constructor() {
+        super(/*No necesito pasarle paramaetros a la clas de CustomRouter */);
+        this.init();
+    }
+
+    init = () => {
+        // Endpóints de Sessions.-------------------------------------------------------------------------------------------
+        // Registrar un usuario.
+        this.create("/register", passportCB("register"), register);
+
+        // Login de usuario.
+        this.create("/login", passportCB("login"), login);
+
+        // Signout de usuario.
+        this.create("/signout", passportCB("signout"), signout);
+
+        // Online usuario.
+        this.create("/online", passportCB("online"), online);
+
+        // Google oauth2. Encargada de Autenticar
+        this.read("/auth/google", passportCB("google"));
+
+        // Google CallBack. Encargada de register/login con google.
+        this.read("/auth/google/cb", passportCB("google"), google);
+    }
+}
+
+// Funciones Callbacks final de los endpoints de sessions.----------------------------------------------------------
+// Funcion devuelve usuario creado.
+function register(req, res, next) {
+    const user = req.user;
+    return res.status(201).json({ message: `USER ${user.email} CREATED.`, user });
+}
+
+// Funcion crea cookie con token de session. Devuelve status true si es exitosa.
+function login(req, res, next) {
+    // Extraemos el token del objt req.token.
+    const token = req.token;
+    // Opciones para la cookie que almacenara el token. Duracion 7 dias y con seguridad httpOnly.
+    const opts = { maxAge: 60 * 60 * 24 * 7, httpOnly: true };
+    // Obtenemos user de req.user.
+    const user = req.user;
+    // Creamos la cookie. Y respondemos.
+    return res.status(200).cookie("token", token, opts).json({ status: true });
+}
+
+// Funcion crea cookie con token de session. Y redirecciona.
+function google(req, res, next) {
+    // Extraemos el token del objt req.token.
+    const token = req.token;
+    // Opciones para la cookie que almacenara el token. Duracion 7 dias y con seguridad httpOnly.
+    const opts = { maxAge: 60 * 60 * 24 * 7, httpOnly: true };
+    // Creamos la cookie. Y respondemos.
+    return res.status(200).cookie("token", token, opts).redirect("/");
+}
+
+// Funcion que destruye la cookie. Dejando si session al cliente.
+function signout(req, res, next) {
+    /*
+         // Extraemos el token del objt req.token.
+        req.token = finishTokenUtil({
+            user: req.user
+        })
+        const token = req.token;
+        // Opciones para la cookie que almacenara el token. Duracion 7 dias y con seguridad httpOnly.
+        const opts = { maxAge: 60 * 60 * 24 * 7, httpOnly: true };
+        // Creamos la cookie. Y respondemos.
+        return res.status(200).Cookie("token", token, opts).redirect("/index.html");
+    */
+    return res.status(200).clearCookie("token").json({ message: "USER SIGN OUT." });
+}
+
+// Funcion contesta que esta online.
+function online(req, res, next) {
+    return res.status(200).json({
+        message: req.user.email.toUpperCase() + " IS ONLINE.",
+        online: true
+    });
+}
+
+let sessionApiRouter = new SessionApiRouter;
+export default sessionApiRouter.getRouter();
+
+
+/*
+Antes de Custom Router
+import { Router } from "express";
+const sessionApiRouter = Router();
+// Endpóints de Sessions.-------------------------------------------------------------------------------------------
+// Registrar un usuario.
+sessionApiRouter.post("/register", passportCB("register"), register);
+
+// Login de usuario.
+sessionApiRouter.post("/login", passportCB("login"), login);
+
+// Signout de usuario.
+sessionApiRouter.post("/signout", passportCB("signout"), signout);
+
+// Online usuario.
+sessionApiRouter.post("/online", passportCB("online"), online);
+
+// Google oauth2. Encargada de Autenticar
+sessionApiRouter.get("/auth/google", passportCB("google"));
+
+// Google CallBack. Encargada de register/login con google.
+sessionApiRouter.get("/auth/google/cb", passportCB("google"), google);
+*/
 
 /*
 // Google oauth sin passport.
@@ -87,99 +198,3 @@ sessionApiRouter.get("/auth/google/cb", async (req, res, next) => {
     }
 });
 */
-
-import { Router } from "express";
-import passportCB from "../../middlewares/passportCB.mid.js";
-
-const sessionApiRouter = Router();
-// Endpóints de Sessions.-------------------------------------------------------------------------------------------
-// Registrar un usuario.
-sessionApiRouter.post("/register", passportCB("register"), register);
-
-// Login de usuario.
-sessionApiRouter.post("/login", passportCB("login"), login);
-
-// Signout de usuario.
-sessionApiRouter.post("/signout", passportCB("signout"), signout);
-
-// Online usuario.
-sessionApiRouter.post("/online", passportCB("online"), online);
-
-// Google oauth2. Encargada de Autenticar
-sessionApiRouter.get("/auth/google", passportCB("google"));
-
-// Google CallBack. Encargada de register/login con google.
-sessionApiRouter.get("/auth/google/cb", passportCB("google"), google);
-
-// Funciones Callbacks final de los endpoints de sessions.----------------------------------------------------------
-function register(req, res, next) {
-    try {
-        const user = req.user;
-        return res.status(201).json({ message: `USER ${user.email} CREATED.`, user });
-    } catch (error) {
-        return next(error);
-    };
-}
-
-function login(req, res, next) {
-    try {
-        // Extraemos el token del objt req.token.
-        const token = req.token;
-        // Opciones para la cookie que almacenara el token. Duracion 7 dias y con seguridad httpOnly.
-        const opts = { maxAge: 60 * 60 * 24 * 7, httpOnly: true };
-        // Obtenemos user de req.user.
-        const user = req.user;
-        // Creamos la cookie. Y respondemos.
-        return res.status(200).cookie("token", token, opts).json({ status: true });
-    } catch (error) {
-        return next(error);
-    };
-}
-
-function google(req, res, next) {
-    try {
-        // Extraemos el token del objt req.token.
-        const token = req.token;
-        // Opciones para la cookie que almacenara el token. Duracion 7 dias y con seguridad httpOnly.
-        const opts = { maxAge: 60 * 60 * 24 * 7, httpOnly: true };
-        // Creamos la cookie. Y respondemos.
-        return res.status(200).cookie("token", token, opts).redirect("/");
-    } catch (error) {
-        return next(error);
-    };
-}
-
-function signout(req, res, next) {
-    try {
-        /*
-             // Extraemos el token del objt req.token.
-            req.token = finishTokenUtil({
-                user: req.user
-            })
-            const token = req.token;
-            // Opciones para la cookie que almacenara el token. Duracion 7 dias y con seguridad httpOnly.
-            const opts = { maxAge: 60 * 60 * 24 * 7, httpOnly: true };
-            // Creamos la cookie. Y respondemos.
-            return res.status(200).Cookie("token", token, opts).redirect("/index.html");
-        */
-
-        return res.status(200).clearCookie("token").json({ message: "USER SIGN OUT." });
-    } catch (error) {
-        return next(error);
-    };
-}
-
-function online(req, res, next) {
-    try {
-        return res.status(200).json({
-            message: req.user.email.toUpperCase() + " IS ONLINE.",
-            online: true
-        })
-    } catch (error) {
-        return next(error);
-    };
-}
-
-export default sessionApiRouter;
-
-
