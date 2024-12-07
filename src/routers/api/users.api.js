@@ -28,8 +28,9 @@ class UsersApiRouter extends CustomRouter {
 // Function getUsers.
 async function getUsers(req, res, next) {
     const message = "USERS FOUND.";
-    const users = await read();
-    return res.status(200).json({ message, users });
+    const user = await read();
+    res.json200(user, message);
+    //return res.status(200).json({ message, users });
 };
 
 // Function getOneUser.
@@ -37,12 +38,16 @@ async function getOneUser(req, res, next) {
     const { id } = req.params;
     const message = "USER FOUND.";
     const user = await readById(id);
-    return res.status(200).json({ message, user });
+    res.json200(user, message);
+    //return res.status(200).json({ message, user });
 };
 
 // Function createUser.
 async function createUser(req, res, next) {
-    return res.status(201).json({ message: "USER CREATED.", user: req.user });
+    const message = "USER CREATED.";
+    const user = req.user;
+    res.json201(user, message);
+    //return res.status(201).json({ message: "USER CREATED.", user: req.user });
 };
 
 // Function updateUser.
@@ -62,7 +67,8 @@ async function deleteUser(req, res, next) {
     const { id } = req.params;
     const message = "USERS DELETED.";
     const user = await destroy(id);
-    return res.status(200).json({ message, user });
+    res.json200(user, message);
+    //return res.status(200).json({ message, user });
 };
 
 let usersApiRouter = new UsersApiRouter();

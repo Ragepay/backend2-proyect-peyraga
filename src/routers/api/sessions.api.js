@@ -33,7 +33,8 @@ class SessionApiRouter extends CustomRouter {
 // Funcion devuelve usuario creado.
 function register(req, res, next) {
     const user = req.user;
-    return res.status(201).json({ message: `USER ${user.email} CREATED.`, user });
+    const message = `USER ${user.email} CREATED.`;
+    res.json201(user, message);
 }
 
 // Funcion crea cookie con token de session. Devuelve status true si es exitosa.
@@ -42,10 +43,11 @@ function login(req, res, next) {
     const token = req.token;
     // Opciones para la cookie que almacenara el token. Duracion 7 dias y con seguridad httpOnly.
     const opts = { maxAge: 60 * 60 * 24 * 7, httpOnly: true };
-    // Obtenemos user de req.user.
-    const user = req.user;
+    const message = "USER LOGGED IN.";
+    const response = null;
     // Creamos la cookie. Y respondemos.
-    return res.status(200).cookie("token", token, opts).json({ status: true });
+    //return res.status(200).cookie("token", token, opts).json({ message });
+    res.cookie("token", token, opts).json200(response, message);
 }
 
 // Funcion crea cookie con token de session. Y redirecciona.
@@ -71,15 +73,18 @@ function signout(req, res, next) {
         // Creamos la cookie. Y respondemos.
         return res.status(200).Cookie("token", token, opts).redirect("/index.html");
     */
-    return res.status(200).clearCookie("token").json({ message: "USER SIGN OUT." });
+    //return res.status(200).clearCookie("token").json({ message: "USER SIGN OUT." });
+    const response = null;
+    const message = "USER SIGN OUT.";
+    res.clearCookie("token").json200(response, message);
 }
 
 // Funcion contesta que esta online.
 function online(req, res, next) {
-    return res.status(200).json({
-        message: req.user.email.toUpperCase() + " IS ONLINE.",
-        online: true
-    });
+    //res.status(200).json({message: req.user.email.toUpperCase() + " IS ONLINE.", online: true});
+    const response = { online: true };
+    const message = req.user.email.toUpperCase() + " IS ONLINE.";
+    res.json200(response, message);
 }
 
 let sessionApiRouter = new SessionApiRouter;

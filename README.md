@@ -71,7 +71,8 @@ El proyecto utiliza las siguientes dependencias principales:
     TOKEN_URL ="https://oauth2.googleapis.com/token"
 
 4. Inicia el servidor:
-    npm run dev
+    npm run dev (dev)
+    npm start (prod)
 
 # Uso
 El servidor incluye las siguientes rutas principales:

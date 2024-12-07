@@ -11,11 +11,11 @@ async function verifyOnline() {
   }
   let response = await fetch(url, opts);
   response = await response.json();
-  const { online } = response;
+  const { online } = response.response;
   if (online) {
     document.querySelector("#navbar").innerHTML = `
           <li class="nav-item">
-            <a class="nav-link" href="/">Home</a>
+            <a class="nav-link" href="/homeApp">Inicio</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/createProduct">Create Products</a>
