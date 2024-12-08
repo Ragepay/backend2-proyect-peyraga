@@ -6,9 +6,13 @@ const collection = "carts";
 // minusculas
 // representativo del recurso
 const schema = new Schema({
-    product_id: { type: Types.ObjectId, ref: "products", required: true },
+    products: [
+        {
+            product_id: { type: Types.ObjectId, ref: "products", required: true },
+            quantity: { type: Number, required: true }
+        }
+    ],
     user_id: { type: Types.ObjectId, ref: "users", required: true },
-    quantity: { type: Number, required: true },
     state: { type: String, enum: ["reserved", "paid", "delivered"], default: "reserved" }
 });
 

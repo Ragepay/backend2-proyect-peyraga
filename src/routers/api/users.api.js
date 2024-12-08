@@ -12,15 +12,15 @@ class UsersApiRouter extends CustomRouter {
     init = () => {
         // ENDPOINTS -----------------------------------------------------------
         // GET | Get all users. Private.
-        this.read("/", passportCB("admin"), getUsers);
+        this.read("/", ["ADMIN"], passportCB("admin"), getUsers);
         // GET | Get one user. Private.
-        this.read("/:id", getOneUser);
+        this.read("/:id", ["ADMIN"], getOneUser);
         // POST | Create user. Private.              UTILIZAR EL REGISTER DE SESSION
-        this.create("/", passportCB("register"), createUser);
+        this.create("/", ["ADMIN"], passportCB("register"), createUser);
         // PUT | Update user. Private.
-        this.update("/:id", passportCB("admin"), updateUser);
+        this.update("/:id", ["USER", "ADMIN"], passportCB("admin"), updateUser);
         // DELETE | Delete user. Private.
-        this.destroy("/:id", passportCB("admin"), deleteUser);
+        this.destroy("/:id", ["USER", "ADMIN"], passportCB("admin"), deleteUser);
     }
 }
 

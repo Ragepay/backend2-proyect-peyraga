@@ -12,11 +12,11 @@ class ApiRouter extends CustomRouter {
     }
 
     init = () => {
-        this.use("/products", productsApiRouter);
-        this.use("/cookies", cookieApiRouter);
-        this.use("/sessions", sessionApiRouter);
-        this.use("/users", usersApiRouter);
-        this.use("/carts", cartsApiRouter);
+        this.use("/products", ["PUBLIC"], productsApiRouter);
+        this.use("/sessions", ["PUBLIC"], sessionApiRouter);
+        this.use("/users", ["PUBLIC"], usersApiRouter);
+        this.use("/carts", ["PUBLIC"], cartsApiRouter);
+        this.use("/cookies", ["ADMIN"], cookieApiRouter);
     }
 }
 

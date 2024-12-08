@@ -9,8 +9,8 @@ class IndexRouter extends CustomRouter {
     }
 
     init = () => {
-        this.use("/api", apiRouter);
-        this.use("/", viewsRouter);
+        this.use("/api", ["PUBLIC"], apiRouter);
+        this.use("/", ["PUBLIC"], viewsRouter);
     }
 }
 

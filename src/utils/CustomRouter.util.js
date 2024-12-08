@@ -1,4 +1,6 @@
 import { Router } from "express";
+import { verifyTokenUtil } from "./token.util.js";
+import { readById } from "../data/mongo/managers/users.manager.js";
 
 class CustomRouter {
     constructor() {
@@ -28,12 +30,35 @@ class CustomRouter {
         return next();
     };
 
+    policies = (policies) => async (req, res, next) => {
+        try {
+            if (policies.includes("PUBLIC")) return next();
+            const token = req?.cookies?.token;
+            if (!token) return res.json401();
+            const data = verifyTokenUtil(token, process.env.SECRET_KEY);
+            const { role, user_id } = data;
+            if (!role || !user_id) return res.json401();
+            if (
+                (policies.includes("USER") && role === "USER") ||
+                (policies.includes("ADMIN") && role === "ADMIN")
+            ) {
+                const user = await readById(user_id);
+                if (!user) return res.json401();
+                req.user = user;
+                return next();
+            }
+            return res.json403();
+        } catch (error) {
+            return res.json400(error.message);
+        }
+    };
+
     // Metodos que son verbos de http. Y el use para middlewares.
-    create = (path, ...cbs) => this._router.post(path, this.responses, this._applyCb(cbs));
-    read = (path, ...cbs) => this._router.get(path, this.responses, this._applyCb(cbs));
-    update = (path, ...cbs) => this._router.put(path, this.responses, this._applyCb(cbs));
-    destroy = (path, ...cbs) => this._router.delete(path, this.responses, this._applyCb(cbs));
-    use = (path, ...cbs) => this._router.use(path, this.responses, this._applyCb(cbs));
+    create = (path, policies, ...cbs) => this._router.post(path, this.responses, this.policies(policies), this._applyCb(cbs));
+    read = (path, policies, ...cbs) => this._router.get(path, this.responses, this.policies(policies), this._applyCb(cbs));
+    update = (path, policies, ...cbs) => this._router.put(path, this.responses, this.policies(policies), this._applyCb(cbs));
+    destroy = (path, policies, ...cbs) => this._router.delete(path, this.responses, this.policies(policies), this._applyCb(cbs));
+    use = (path, policies, ...cbs) => this._router.use(path, this.responses, this.policies(policies), this._applyCb(cbs));
 
 };
 

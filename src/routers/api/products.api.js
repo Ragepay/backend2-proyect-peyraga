@@ -10,15 +10,15 @@ class ProductsApiRouter extends CustomRouter {
 
     init = () => { // Endpoints de products
         // GET | Get all products. Public.
-        this.read("/", getProducts);
+        this.read("/", ["PUBLIC"], getProducts);
         // GET | Get one product. Public.
-        this.read("/:id", getOneProduct);
+        this.read("/:id", ["PUBLIC"], getOneProduct);
         // POST | Create Product. Private: Only Admins.
-        this.create("/", passportCB("admin"), createProduct);
+        this.create("/", ["ADMIN"], passportCB("admin"), createProduct);
         // PUT | Update Product. Private: Only Admins.
-        this.update("/:id", passportCB("admin"), updateProduct);
+        this.update("/:id", ["ADMIN"], passportCB("admin"), updateProduct);
         // Delete | Delete Product. Private: Only Admins.
-        this.destroy("/:id", passportCB("admin"), deleteProduct);
+        this.destroy("/:id", ["ADMIN"], passportCB("admin"), deleteProduct);
     }
 }
 

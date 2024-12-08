@@ -10,22 +10,22 @@ class SessionApiRouter extends CustomRouter {
     init = () => {
         // Endpóints de Sessions.-------------------------------------------------------------------------------------------
         // Registrar un usuario.
-        this.create("/register", passportCB("register"), register);
+        this.create("/register", ["PUBLIC"], passportCB("register"), register);
 
         // Login de usuario.
-        this.create("/login", passportCB("login"), login);
+        this.create("/login", ["PUBLIC"], passportCB("login"), login);
 
         // Signout de usuario.
-        this.create("/signout", passportCB("signout"), signout);
+        this.create("/signout", ["USER", "ADMIN"], passportCB("signout"), signout);
 
         // Online usuario.
-        this.create("/online", passportCB("online"), online);
+        this.create("/online", ["USER", "ADMIN"], passportCB("online"), online);
 
         // Google oauth2. Encargada de Autenticar
-        this.read("/auth/google", passportCB("google"));
+        this.read("/auth/google", ["PUBLIC"], passportCB("google"));
 
         // Google CallBack. Encargada de register/login con google.
-        this.read("/auth/google/cb", passportCB("google"), google);
+        this.read("/auth/google/cb", ["PUBLIC"], passportCB("google"), google);
     }
 }
 
