@@ -4,9 +4,10 @@ import {
     read,
     update,
     destroy,
+    readByData
 } from "../../data/mongo/managers/carts.manager.js";
 import Cart from "../../data/mongo/models/cart.model.js";
-import { readById } from "../../data/mongo/managers/users.manager.js";
+
 
 class CartsApiRouter extends CustomRouter {
     constructor() {
@@ -14,11 +15,13 @@ class CartsApiRouter extends CustomRouter {
         this.init();
     }
     init = () => {
-        // GET All Carts.
-        this.read("/", ["USER", "ADMIN"], readAllCarts);
-        // POST
+        // GET ALL CARTS.
+        this.read("/", ["ADMIN"], getAllCarts);
+        // GET Cart´s USER.
+        this.read("/:user_id", ["USER", "ADMIN"], getUserCarts);
+        // POST create a Cart product.
         this.create("/", ["USER", "ADMIN"], createCart);
-        // PUT
+        // PUT update a Cart product.
         this.update("/:id", ["USER", "ADMIN"], updateCart);
         // DELETE
         this.destroy("/:id", ["USER", "ADMIN"], destroyCart);
@@ -28,23 +31,25 @@ class CartsApiRouter extends CustomRouter {
 const cartsApiRouter = new CartsApiRouter();
 export default cartsApiRouter.getRouter();
 
-async function createCart(req, res) {
-    const message = "CART CREATED";
-    const { user_id, products } = req.body;
-    const user = await readById(user_id);
-    if (!user) {
-        const message = "USER NOT FOUND.";
-        return res.json400(response, message);
-    }
-    const newCart = await create(req.body);
-    const response = await Cart.findById(newCart._id).populate("product_id").populate("user_id");
-    return res.json201(response, message);
-}
-
-async function readAllCarts(req, res) {
-    const message = "CARTS FOUND";
+async function getAllCarts(req, res) {
+    const message = "CARTS FOUND.";
     const response = await read();
     return res.json200(response, message);
+}
+
+async function getUserCarts(req, res) {
+    const { user_id } = req.params;
+    const message = "CARTS FOUND.";
+    const response = await readByData({ user_id });
+    return res.json200(response, message);
+}
+
+async function createCart(req, res) {
+    const message = "CART CREATED";
+    const data = req.body;
+    const cart = await create(data);
+    const response = await Cart.findById(cart._id).populate("product_id").populate("user_id");
+    return res.json201(response, message);
 }
 
 async function updateCart(req, res) {

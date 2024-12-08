@@ -5,9 +5,10 @@ const collection = "products";
 
 const schema = new Schema({
     title: { type: String, required: true, index: true },
-    price: { type: Number, default: 10 },
-    stock: { type: Number, default: 10 },
-    category: { type: String, enum: ["celulares", "tablets", "computadoras"], default: "computadoras" }
+    photo: { type: String, default: "https://via.placeholder.com/150" },
+    price: { type: Number, default: 1 },
+    stock: { type: Number, default: 1 },
+    category: { type: String, enum: ["celulares", "tablets", "computadoras"], default: "ALL" }
 });
 
 const Products = model(collection, schema);

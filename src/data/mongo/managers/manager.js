@@ -37,7 +37,7 @@ class Manager {
             return all;
         } catch (error) {
             throw error;
-        };
+        }
     };
 
     update = async (id, data) => {
