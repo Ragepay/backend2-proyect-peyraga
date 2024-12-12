@@ -9,9 +9,8 @@ import { readByEmail, create, readById, update } from "../data/mongo/managers/us
 // Utils
 import { createHashUtil, verifyHashUtil } from "../utils/hash.util.js"; // Hash Contraeña
 import { createTokenUtil } from "../utils/token.util.js"; // Tokens 
-
-const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIRECT_URI, SECRET_KEY } = process.env
-
+import envUtil from "../utils/env.util.js";
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIRECT_URI, SECRET_KEY } = envUtil;
 // Estrategia de register.
 // Verifica que el correo no exista en la base de datos.
 // Crea un nuevo usuario hasheando contraseña.
