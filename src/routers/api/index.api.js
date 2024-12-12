@@ -4,6 +4,8 @@ import sessionApiRouter from "./sessions.api.js";
 import usersApiRouter from "./users.api.js";
 import cartsApiRouter from "./carts.api.js";
 import CustomRouter from "../../utils/CustomRouter.util.js";
+//import sum from "../../utils/process.util.js";
+import { fork } from "child_process"
 
 class ApiRouter extends CustomRouter {
     constructor() {
@@ -17,6 +19,15 @@ class ApiRouter extends CustomRouter {
         this.use("/users", ["PUBLIC"], usersApiRouter);
         this.use("/carts", ["PUBLIC"], cartsApiRouter);
         this.use("/cookies", ["ADMIN"], cookieApiRouter);
+        this.read("/sum", ["PUBLIC"], (req, res) => {
+            //const response = sum();
+            const child = fork("./src/utils/process.util.js")
+            child.send("start");
+            child.on("message", (response) => {
+                const message = "SUMATORIA OBTENIDA.";
+                return res.json200(response, message)
+            });
+        });
     }
 }
 
