@@ -17,7 +17,7 @@ import argsUtil from "./src/utils/args.util.js";
 //------------------------------------------------------------------------------------
 // Iniciacion del servidor
 const app = express();
-// Varioable env PORT.
+// Variable env PORT.
 const PORT = envUtil.PORT;
 // Funcion ready server y BBDD Mongo.
 const ready = () => {

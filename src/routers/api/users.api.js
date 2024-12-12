@@ -1,6 +1,5 @@
 import CustomRouter from "../../utils/CustomRouter.util.js";
-import { read, update, destroy, readById } from "../../data/mongo/managers/users.manager.js";
-import { createHashUtil } from "../../utils/hash.util.js";
+import { getUsers, getOneUser, createUser, updateUser, deleteUser } from "../../controllers/users.controller.js";
 import passportCB from "../../middlewares/passportCB.mid.js";
 
 class UsersApiRouter extends CustomRouter {
@@ -18,58 +17,11 @@ class UsersApiRouter extends CustomRouter {
         // POST | Create user. Private.              UTILIZAR EL REGISTER DE SESSION
         this.create("/", ["ADMIN"], passportCB("register"), createUser);
         // PUT | Update user. Private.
-        this.update("/:id", ["USER", "ADMIN"], passportCB("admin"), updateUser);
+        this.update("/:id", ["USER", "ADMIN"], updateUser);
         // DELETE | Delete user. Private.
         this.destroy("/:id", ["USER", "ADMIN"], passportCB("admin"), deleteUser);
     }
 }
-
-// FUNCIONES -----------------------------------------------------------
-// Function getUsers.
-async function getUsers(req, res, next) {
-    const message = "USERS FOUND.";
-    const user = await read();
-    res.json200(user, message);
-    //return res.status(200).json({ message, users });
-};
-
-// Function getOneUser.
-async function getOneUser(req, res, next) {
-    const { id } = req.params;
-    const message = "USER FOUND.";
-    const user = await readById(id);
-    res.json200(user, message);
-    //return res.status(200).json({ message, user });
-};
-
-// Function createUser.
-async function createUser(req, res, next) {
-    const message = "USER CREATED.";
-    const user = req.user;
-    res.json201(user, message);
-    //return res.status(201).json({ message: "USER CREATED.", user: req.user });
-};
-
-// Function updateUser.
-async function updateUser(req, res, next) {
-    const { id } = req.params;
-    const data = req.body;
-    if (data.password) {
-        data.password = createHashUtil(data.password);
-    }
-    const message = "USERS UPDATED.";
-    const user = await update(id, data);
-    return res.status(200).json({ message, user });
-};
-
-// Function deleteUser.
-async function deleteUser(req, res, next) {
-    const { id } = req.params;
-    const message = "USERS DELETED.";
-    const user = await destroy(id);
-    res.json200(user, message);
-    //return res.status(200).json({ message, user });
-};
 
 let usersApiRouter = new UsersApiRouter();
 export default usersApiRouter.getRouter();
