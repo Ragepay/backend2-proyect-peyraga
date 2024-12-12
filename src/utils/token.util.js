@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
-const { SECRET_KEY } = process.env;
+import envUtil from "./env.util.js";
+
+const { SECRET_KEY } = envUtil;
 
 // Crear un token con data. Dura 7 dias.
 const createTokenUtil = (data) => {

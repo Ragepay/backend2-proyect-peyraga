@@ -1,4 +1,4 @@
-import "dotenv/config.js"
+import envUtil from './src/utils/env.util.js';
 import express from 'express';
 import morgan from 'morgan';
 import pathHandler from "./src/middlewares/pathHandler.mid.js";
@@ -11,17 +11,21 @@ import session from "express-session";
 import MongoStore from "connect-mongo";
 import { __dirname } from "./utils.js";
 import handlebars from 'express-handlebars';
+import argsUtil from "./src/utils/args.util.js";
 
 /* INICIALIZACION DE SERVER BASICO */
 //------------------------------------------------------------------------------------
 // Iniciacion del servidor
 const app = express();
 // Varioable env PORT.
-const PORT = process.env.PORT;
+const PORT = envUtil.PORT;
 // Funcion ready server y BBDD Mongo.
 const ready = () => {
     console.log("Server ready on port: " + PORT);
-    dbConnect();
+    console.log("Server on mode: " + argsUtil.env)
+    if (argsUtil.persistence === "mongo") {
+        dbConnect();
+    }
 }
 // Funcion Listen del servidor.
 app.listen(PORT, ready);
@@ -42,7 +46,7 @@ app.use(express.static("public"));
 // Muestra por consola un registro de las solicitudes HTTPs (GET, POST, PUT, DELETE).
 app.use(morgan("dev"));
 // Utilizada para utilizar cookies, y le podes dar seguridad con signed:true. Configuracion de cookies.
-app.use(cookieParser(process.env.SECRET_KEY));
+app.use(cookieParser(envUtil.SECRET_KEY));
 
 /*
 // Utilizado para crear sessiones, almacena el id en una cookie firmada. Configuracion de Sessions en cookie.
@@ -69,10 +73,10 @@ app.use(session({
 
 // Configuracion de session con Mongo Storage.
 app.use(session({
-    secret: process.env.SECRET_KEY,
+    secret: envUtil.SECRET_KEY,
     resave: true,
     saveUninitialized: true,
-    store: new MongoStore({ mongoUrl: process.env.MONGO_LINK, ttl: 60 * 60 * 24 }), // Default 14 dias.
+    store: new MongoStore({ mongoUrl: envUtil.MONGO_LINK, ttl: 60 * 60 * 24 }), // Default 14 dias.
 }));
 
 // Middleware de routers.
@@ -82,3 +86,18 @@ app.use(indexRouter);
 app.use(errorHandler);
 app.use(pathHandler); // Debe ser el ultimo, porque recibe rutas no existentes.
 //------------------------------------------------------------------------------------
+
+//console.log(argsUtil);
+//console.log(process.pid);
+//console.log(process.argv);
+//console.log(process.argv[2]);
+/*
+.env.dev
+PORT=
+MONGO_LINK=
+SECRET_KEY=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+REDIRECT_URI=
+TOKEN_URL=
+*/
