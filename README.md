@@ -50,6 +50,7 @@ El proyecto utiliza las siguientes dependencias principales:
 - **Dotenv**: Manejo de variables de entorno.
 - **Morgan**: Logger HTTP para desarrollo.
 - **Axios**: Cliente HTTP para consumir APIs.
+- **Commander**: Para la manipulaicon de Argumentos.
 
 ## Instalación
 1. Clona este repositorio:
