@@ -12,6 +12,8 @@ import MongoStore from "connect-mongo";
 import { __dirname } from "./utils.js";
 import handlebars from 'express-handlebars';
 import argsUtil from "./src/utils/args.util.js";
+import cors from "cors";
+
 
 /* INICIALIZACION DE SERVER BASICO */
 //------------------------------------------------------------------------------------
@@ -47,6 +49,16 @@ app.use(express.static("public"));
 app.use(morgan("dev"));
 // Utilizada para utilizar cookies, y le podes dar seguridad con signed:true. Configuracion de cookies.
 app.use(cookieParser(envUtil.SECRET_KEY));
+// Cors para compartir recursos de origenes crusados.
+app.use(
+    cors({
+        // origin:true, esta abierto a todo el publico. Para que sea solo para el front desplegado, pegar la base del Uri en string.
+        origin: true,
+        //origin: envUtil.BASE_URL,
+        // Permite el cruce de cookies.
+        credentials: true
+    })
+);
 
 /*
 // Utilizado para crear sessiones, almacena el id en una cookie firmada. Configuracion de Sessions en cookie.
