@@ -1,7 +1,7 @@
 import { connect } from "mongoose";
 import envUtil from "./env.util.js";
 
-const dbConnect = async () => {
+async function dbConnect() {
     try {
         await connect(envUtil.MONGO_LINK);
         console.log("MongoDB connected");

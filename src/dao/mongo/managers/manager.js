@@ -24,7 +24,7 @@ class Manager {
 
     readById = async (id) => {
         try {
-            const one = await this.model.findOne({ _id: id }).lean();
+            const one = await this.model.findById( id ).lean();
             return one;
         } catch (error) {
             throw error;
@@ -58,6 +58,15 @@ class Manager {
             throw error;
         };
     };
+
+    readByData = async (data) => {
+        try {
+            const one = await this.model.find(data).populate("product_id").populate("user_id");
+            return one;
+        } catch (error) {
+            throw error;
+        };
+    }
 
 };
 

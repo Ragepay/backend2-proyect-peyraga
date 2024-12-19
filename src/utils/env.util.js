@@ -14,7 +14,8 @@ const envUtil = {
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     REDIRECT_URI: process.env.REDIRECT_URI,
     TOKEN_URL: process.env.TOKEN_URL,
-    BASE_URL: process.env.BASE_URL
+    BASE_URL: process.env.BASE_URL,
+    MODE: process.env.MODE
 };
 
 export default envUtil;

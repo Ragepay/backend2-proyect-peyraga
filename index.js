@@ -4,14 +4,12 @@ import morgan from 'morgan';
 import pathHandler from "./src/middlewares/pathHandler.mid.js";
 import errorHandler from "./src/middlewares/errorHandler.mid.js";
 import indexRouter from "./src/routers/index.router.js";
-import dbConnect from "./src/utils/dbConnect.util.js";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 //import sessionFileStore from 'session-file-store';
 import MongoStore from "connect-mongo";
 import { __dirname } from "./utils.js";
 import handlebars from 'express-handlebars';
-import argsUtil from "./src/utils/args.util.js";
 import cors from "cors";
 
 
@@ -20,14 +18,11 @@ import cors from "cors";
 // Iniciacion del servidor
 const app = express();
 // Variable env PORT.
-const PORT = envUtil.PORT;
+const { PORT, MODE } = envUtil;
 // Funcion ready server y BBDD Mongo.
 const ready = () => {
     console.log("Server ready on port: " + PORT);
-    console.log("Server on mode: " + argsUtil.env)
-    if (argsUtil.persistence === "mongo") {
-        dbConnect();
-    }
+    console.log("Dao Mode: " + MODE);
 }
 // Funcion Listen del servidor.
 app.listen(PORT, ready);

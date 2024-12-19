@@ -4,13 +4,18 @@ import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GoogleStrategy } from "passport-google-oauth2";
 //import { Strategy as CustomStrategy } from "passport-custom";
 import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";
-// Service de users.
-import { readByEmail, create, readById, update } from "../data/mongo/managers/users.manager.js";
+// Import dao
+import dao from "../dao/index.factory.js";
 // Utils
 import { createHashUtil, verifyHashUtil } from "../utils/hash.util.js"; // Hash Contraeña
 import { createTokenUtil } from "../utils/token.util.js"; // Tokens 
 import envUtil from "../utils/env.util.js";
+
+// Destructuring de variables de entorno.
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIRECT_URI, SECRET_KEY } = envUtil;
+// Destructuring UsersManager of dao.
+const { UsersManager } = dao;
+
 // Estrategia de register.
 // Verifica que el correo no exista en la base de datos.
 // Crea un nuevo usuario hasheando contraseña.
@@ -22,7 +27,7 @@ passport.use("register", new LocalStrategy(
             // Validacion de data que es si o si es required:true.
             if (!email || !password) {/* BAD REQUEST */ };
             // Existencia de User con ese email
-            const existUser = await readByEmail(email);
+            const existUser = await UsersManager.readByEmail(email);
             // Validacion de User
             if (existUser) {
                 const info = { message: "USER ALREADY EXISTS.", statusCode: 401 }
@@ -31,7 +36,7 @@ passport.use("register", new LocalStrategy(
             // Hasheo de contraseña y creacion de user.
             req.body.password = createHashUtil(password);
             const data = req.body;
-            const user = await create(data);
+            const user = await UsersManager.create(data);
             // Devolvemos user en el objeto req.user.
             return done(null, user);
         } catch (error) {
@@ -50,7 +55,7 @@ passport.use("login", new LocalStrategy(
     async (req, email, password, done) => {
         try {
             // Existencia del User con ese email.
-            let user = await readByEmail(email);
+            let user = await UsersManager.readByEmail(email);
             // SI no existe, la respuesta.
             if (!user) {
                 const info = { message: "USER NOT FOUND, INVALID EMAIL.", statusCode: 401 }
@@ -74,7 +79,7 @@ passport.use("login", new LocalStrategy(
             // Lo almacenamos en req.token. Para posterior manipulación. 
             req.token = token;
             // Al user lo ponemos online. Actualizando su propiedad isOnline mediante un update.
-            user = await update(user._id, { isOnline: true });
+            user = await UsersManager.update(user._id, { isOnline: true });
             // Devolvemos user en el objeto req.user.
             return done(null, user);
         } catch (error) {
@@ -97,7 +102,7 @@ passport.use("google", new GoogleStrategy(
     }, async (req, accessToken, refreshToken, profile, done) => {
         try {
             // Verificamos si existe algun otro user con el mismo id de google.
-            let user = await readByEmail(profile.id);
+            let user = await UsersManager.readByEmail(profile.id);
             // Si no existe, creamos el user.
             if (!user) {
                 user = {
@@ -109,7 +114,7 @@ passport.use("google", new GoogleStrategy(
                     emailGoogle: profile.emails[0].value
                 };
                 // Creamos el user.
-                user = await create(user);
+                user = await UsersManager.create(user);
             }
             // Creamos el token, con la informacion que queramos.
             const token = createTokenUtil({
@@ -120,7 +125,7 @@ passport.use("google", new GoogleStrategy(
             // Lo almacenamos en req.token. Para posterior manipulación. 
             req.token = token;
             // Al user lo ponemos online. Actualizando su propiedad isOnline mediante un update.
-            user = await update(user._id, { isOnline: true });
+            user = await UsersManager.update(user._id, { isOnline: true });
             // Devolvemos user en el objeto req.user.
             return done(null, user);
         } catch (error) {
@@ -138,7 +143,7 @@ passport.use("admin", new JwtStrategy({
 }, async (data, done) => {
     try {
         // Obtenemos el user mediante el id.
-        const user = await readById(data.user_id);
+        const user = await UsersManager.readById(data.user_id);
         // Destructuramos el rol.
         const { role } = data;
         // Si es distinto a "ADMIN", respuesta. Si es igual, lo deja pasar.
@@ -166,8 +171,9 @@ passport.use("online", new JwtStrategy({
     try {
         // Extraemos el id de la data del token.
         const { user_id } = data;
+        console.log(user_id);
         // Obtenemos el user.
-        const user = await readById(user_id);
+        const user = await UsersManager.readById(user_id);
         // Extraemos la propiedad isOnline.
         const { isOnline } = user;
         // Si es false, respuesta.
@@ -194,8 +200,8 @@ passport.use("signout", new JwtStrategy({
 }, async (data, done) => {
     try {
         const { user_id } = data;
-        let user = await readById(user_id);
-        user = await update(user_id, { isOnline: false });
+        let user = await UsersManager.readById(user_id);
+        user = await UsersManager.update(user_id, { isOnline: false });
         user = {};
         return done(null, user);
     } catch (error) {
