@@ -1,10 +1,12 @@
 import fs from "fs";
 
 class UsersManager {
+
   constructor() {
     this.path = "./src/dao/fs/files/users.json";
     this.init();
   }
+
   init() {
     const exists = fs.existsSync(this.path);
     if (!exists) {
@@ -12,6 +14,7 @@ class UsersManager {
       fs.writeFileSync(this.path, stringData);
     }
   }
+
   async create(data) {
     try {
       if (!data.email || !data.password) {
@@ -28,6 +31,7 @@ class UsersManager {
       throw error;
     }
   }
+  
   async read(role) {
     try {
       let all = await fs.promises.readFile(this.path, "utf-8");
@@ -38,6 +42,7 @@ class UsersManager {
       throw error;
     }
   }
+
   //PROGRAMAR PAGINATE EN FS
   async readById(id) {
     try {
@@ -49,6 +54,7 @@ class UsersManager {
       throw error;
     }
   }
+
   async readByEmail(email) {
     try {
       let all = await fs.promises.readFile(this.path, "utf-8");
@@ -59,6 +65,7 @@ class UsersManager {
       throw error;
     }
   }
+
   async update(id, data) {
     try {
       let all = await this.read();
@@ -75,6 +82,7 @@ class UsersManager {
       throw error;
     }
   }
+
   async destroy(id) {
     try {
       let all = await fs.promises.readFile(this.path, "utf-8");
@@ -90,6 +98,7 @@ class UsersManager {
       throw error;
     }
   }
+
 }
 
 const usersManager = new UsersManager();

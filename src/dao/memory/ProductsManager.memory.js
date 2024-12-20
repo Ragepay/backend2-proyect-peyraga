@@ -2,6 +2,7 @@ import crypto from "crypto"
 class ProductsManager {
   
 	static #products = []
+
   async create(data) {
     try {
       if (!data.title || !data.description) {
@@ -14,6 +15,7 @@ class ProductsManager {
       throw error;
     }
   }
+
   async read(filter) {
     try {
       return ProductsManager.#products;
@@ -22,7 +24,9 @@ class ProductsManager {
       throw error;
     }
   }
+
   //PROGRAMAR PAGINATE EN MEMORY
+  
   async readOne(id) {
     try {
       let note = ProductsManager.#products.find((each) => each._id === id);
@@ -31,6 +35,7 @@ class ProductsManager {
       throw error;
     }
   }
+
   async update(id, data) {
     try {
       let one = ProductsManager.#products.find((each) => each._id === id);
@@ -44,6 +49,7 @@ class ProductsManager {
       throw error;
     }
   }
+
   async destroy(id) {
     try {
       let one = ProductsManager.#products.find((each) => each._id === id);
@@ -55,6 +61,7 @@ class ProductsManager {
       throw error;
     }
   }
+
 }
 
 const productsManager = new ProductsManager();

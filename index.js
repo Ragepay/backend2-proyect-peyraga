@@ -13,16 +13,16 @@ import handlebars from 'express-handlebars';
 import cors from "cors";
 
 
+
 /* INICIALIZACION DE SERVER BASICO */
 //------------------------------------------------------------------------------------
 // Iniciacion del servidor
 const app = express();
 // Variable env PORT.
-const { PORT, MODE } = envUtil;
+const { PORT } = envUtil;
 // Funcion ready server y BBDD Mongo.
 const ready = () => {
     console.log("Server ready on port: " + PORT);
-    console.log("Dao Mode: " + MODE);
 }
 // Funcion Listen del servidor.
 app.listen(PORT, ready);
@@ -93,6 +93,7 @@ app.use(indexRouter);
 app.use(errorHandler);
 app.use(pathHandler); // Debe ser el ultimo, porque recibe rutas no existentes.
 //------------------------------------------------------------------------------------
+
 
 //console.log(argsUtil);
 //console.log(process.pid);

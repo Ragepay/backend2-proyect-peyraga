@@ -1,16 +1,17 @@
-import envUtil from "../utils/env.util.js";
-import dbConnect from "../utils/dbConnect.util.js";
+import dbConnect from "../utils/mongoConnect.util.js";
+import argsUtil from "../utils/args.util.js";
+
 
 
 // En base a esta variable me voy a conectar a la persistencia que corresponda.
-const { MODE } = envUtil;
+const { persistence } = argsUtil;
 
 let dao = {};
 
-switch (MODE) {
+switch (persistence) {
     case "MEMORY":
         // Debo llenar Dao con las importaciones de los managers de Memory.
-        console.log("Connected to memory system.");
+        console.log("Persistence: Memory System.");
         const { default: ProductsMaganerMemory } = await import("./memory/ProductsManager.memory.js");
         const { default: UsersMaganerMemory } = await import("./memory/UsersManager.memory.js");
         const { default: CartsMaganerMemory } = await import("./memory/CartsManager.memory.js");
@@ -22,7 +23,7 @@ switch (MODE) {
         break;
     case "FS":
         // Debo llenar Dao con las importaciones de los managers de FileSystem.
-        console.log("Connected to file system.");
+        console.log("Persistence: File System.");
         const { default: ProductsMaganerFS } = await import("./fs/ProductsManager.fs.js");
         const { default: UsersMaganerFS } = await import("./fs/UsersManager.fs.js");
         const { default: CartsMaganerFS } = await import("./fs/CartsManager.fs.js");
@@ -33,8 +34,8 @@ switch (MODE) {
         };
         break;
         case "SQL":
-        // Debo llenar Dao con las importaciones de los managers de SQL
-        console.log("Connected to SQL");
+        // Debo llenar Dao con las importaciones de los managers de SQL. Y conectarme al SQL
+        console.log("Persistence: SQL.");
         break;
     default:
         // Debo llenar Dao con las importaciones de los managers de MONGO.

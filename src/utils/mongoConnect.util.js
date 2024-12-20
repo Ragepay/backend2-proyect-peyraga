@@ -4,7 +4,7 @@ import envUtil from "./env.util.js";
 async function dbConnect() {
     try {
         await connect(envUtil.MONGO_LINK);
-        console.log("MongoDB connected");
+        console.log("Persistence: MongoDB");
     } catch (error) {
         console.log(error);
     }

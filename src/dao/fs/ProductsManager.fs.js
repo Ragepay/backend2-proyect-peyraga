@@ -2,10 +2,12 @@ import fs from "fs";
 import crypto from "crypto"
 
 class ProductsManager {
+
     constructor() {
         this.path = "./src/dao/fs/files/products.json";
         this.init();
       }
+
       init() {
         const exists = fs.existsSync(this.path);
         if (!exists) {
@@ -13,6 +15,7 @@ class ProductsManager {
           fs.writeFileSync(this.path, stringData);
         }
       }
+
     async create(data) {
       try {
         if (!data.title || !data.description) {
@@ -30,6 +33,7 @@ class ProductsManager {
         throw error;
       }
     }
+
     async read(filter) {
       try {
         let all = await fs.promises.readFile(this.path, "utf-8");
@@ -39,7 +43,9 @@ class ProductsManager {
         throw error;
       }
     }
+
     //PROGRAMAR PAGINATE EN MEMORY
+
     async readOne(id) {
       try {
         let all = await fs.promises.readFile(this.path, "utf-8");
@@ -50,6 +56,7 @@ class ProductsManager {
         throw error;
       }
     }
+
     async update(id, data) {
       try {
         let all = await this.read();
@@ -66,6 +73,7 @@ class ProductsManager {
         throw error;
       }
     }
+
     async destroy(id) {
       try {
         let all = await fs.promises.readFile(this.path, "utf-8");
@@ -81,6 +89,7 @@ class ProductsManager {
         throw error;
       }
     }
+    
   }
   
   const productsManager = new ProductsManager();

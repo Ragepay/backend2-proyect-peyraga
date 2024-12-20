@@ -1,4 +1,5 @@
 import dao from "../dao/index.factory.js";
+import ProductsDTO from "../dto/products.dto.js";
 const { ProductsManager } = dao;
 
 async function readProductsService() {
@@ -12,6 +13,7 @@ async function readOneProductsService(id) {
 }
 
 async function createProductsService(data) {
+    data = new ProductsDTO(data);
     const response = await ProductsManager.create(data);
     return response;
 }

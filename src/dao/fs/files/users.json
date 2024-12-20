@@ -31,7 +31,8 @@
     "age": 12,
     "photo": "https://i.postimg.cc/wTgNFWhR/profile.png",
     "createdAt": "2024-06-11T01:12:09.711Z",
-    "updatedAt": "2024-06-11T01:12:09.711Z"
+    "updatedAt": "2024-06-11T01:12:09.711Z",
+    "isOnline": true
   },
   {
     "_id": "42bfb2546fe2d0661ac19eb3",
@@ -42,5 +43,10 @@
     "photo": "https://i.postimg.cc/wTgNFWhR/profile.png",
     "createdAt": "2024-06-11T01:13:14.143Z",
     "updatedAt": "2024-06-11T01:13:14.143Z"
+  },
+  {
+    "email": "benjapey99@gmail.com",
+    "password": "$2b$10$mWC.WO5Qa0ih2ZUkPZpAhe2KtFisinctagswmC8Vlu1FzIwUSTW5.",
+    "role": "ADMIN"
   }
 ]

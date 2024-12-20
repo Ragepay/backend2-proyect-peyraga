@@ -5,6 +5,7 @@ const collection = "products";
 
 const schema = new Schema({
     title: { type: String, required: true, index: true },
+    description: { type: String, default: "description" },
     photo: { type: String, default: "https://via.placeholder.com/150" },
     price: { type: Number, default: 1 },
     stock: { type: Number, default: 1 },

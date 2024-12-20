@@ -1,5 +1,7 @@
 class CarsManager {
+
   static #carts = [];
+
   async create(data) {
     try {
       if (!data.user_id || !data.product_id) {
@@ -12,6 +14,7 @@ class CarsManager {
       throw error;
     }
   }
+
   async read(filter) {
     try {
       const filtered = [...CarsManager.#carts];
@@ -24,7 +27,9 @@ class CarsManager {
       throw error;
     }
   }
+
   //PROGRAMAR PAGINATE EN MEMORY
+  
   async readOne(id) {
     try {
       let note = CarsManager.#carts.find((each) => each.id === id);
@@ -33,6 +38,7 @@ class CarsManager {
       throw error;
     }
   }
+
   async update(id, data) {
     try {
       let one = CarsManager.#carts.find((each) => each.id === id);
@@ -46,6 +52,7 @@ class CarsManager {
       throw error;
     }
   }
+
   async destroy(id) {
     try {
       let one = CarsManager.#carts.find((each) => each.id === id);
@@ -59,6 +66,7 @@ class CarsManager {
       throw error;
     }
   }
+
 }
 
 const carsManager = new CarsManager();

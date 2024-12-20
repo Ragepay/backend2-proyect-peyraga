@@ -1,5 +1,7 @@
 class UsersManager {
+
   static #users = [];
+
   async create(data) {
     try {
       if (!data.email || !data.password) {
@@ -12,6 +14,7 @@ class UsersManager {
       throw error;
     }
   }
+
   async read(role) {
     try {
       return UsersManager.#users;
@@ -20,7 +23,9 @@ class UsersManager {
       throw error;
     }
   }
+
   //PROGRAMAR PAGINATE EN MEMORY
+
   async readById(id) {
     try {
       let note = UsersManager.#users.find((each) => each.id === id);
@@ -29,6 +34,7 @@ class UsersManager {
       throw error;
     }
   }
+
   async readByEmail(email) {
     try {
       let note = UsersManager.#users.find((each) => each.email === email);
@@ -37,7 +43,7 @@ class UsersManager {
       throw error;
     }
   }
-  //PROGRAMAR READBYEMAIL EN MEMORY
+
   async update(id, data) {
     try {
       let one = UsersManager.#users.find((each) => each.id === id);
@@ -51,6 +57,7 @@ class UsersManager {
       throw error;
     }
   }
+
   async destroy(id) {
     try {
       let one = UsersManager.#users.find((each) => each.id === id);
@@ -64,6 +71,7 @@ class UsersManager {
       throw error;
     }
   }
+  
 }
 
 const usersManager = new UsersManager();

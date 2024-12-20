@@ -1,10 +1,12 @@
 import fs from "fs";
 
 class CarsManager {
+
     constructor() {
         this.path = "./src/dao/fs/files/carts.json";
         this.init();
       }
+
       init() {
         const exists = fs.existsSync(this.path);
         if (!exists) {
@@ -12,6 +14,7 @@ class CarsManager {
           fs.writeFileSync(this.path, stringData);
         }
       }
+
     async create(data) {
       try {
         if (!data.user_id || !data.product_id) {
@@ -28,6 +31,7 @@ class CarsManager {
         throw error;
       }
     }
+
     async read(filter) {
       try {
         let all = await fs.promises.readFile(this.path, "utf-8");
@@ -38,7 +42,9 @@ class CarsManager {
         throw error;
       }
     }
+
     //PROGRAMAR PAGINATE EN MEMORY
+
     async readOne(id) {
       try {
         let all = await fs.promises.readFile(this.path, "utf-8");
@@ -49,6 +55,7 @@ class CarsManager {
         throw error;
       }
     }
+
     async update(id, data) {
       try {
         let all = await this.read();
@@ -65,6 +72,7 @@ class CarsManager {
         throw error;
       }
     }
+
     async destroy(id) {
       try {
         let all = await fs.promises.readFile(this.path, "utf-8");
@@ -80,6 +88,7 @@ class CarsManager {
         throw error;
       }
     }
+    
   }
   
   const carsManager = new CarsManager();
