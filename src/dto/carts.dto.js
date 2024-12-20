@@ -3,7 +3,7 @@ import crypto from "crypto";
 
 const { persistence } = argsUtil;
 
-class ProductsDTO {
+class CartDTO {
 
     constructor(data) {
 
@@ -13,13 +13,12 @@ class ProductsDTO {
             this.updateAt = new Date();
         }
 
-        this.title = data.title;
-        this.description = data.description || "desciption";
-        this.price = data.price || 10;
-        this.stock = data.stock || 10;
-        this.category = data.category || "ALL";
-        this.photo = data.photo || "https://via.placeholder.com/150";
+        this.product_id = data.product_id;
+        this.user_id = data.user_id;
+        this.quantity = data.quantity;
+        this.state = data.state || "reserved";
+        
     }
 }
 
-export default ProductsDTO;
+export default CartDTO;
