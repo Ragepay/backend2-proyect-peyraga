@@ -51,6 +51,7 @@ El proyecto utiliza las siguientes dependencias principales:
 - **Morgan**: Logger HTTP para desarrollo.
 - **Axios**: Cliente HTTP para consumir APIs.
 - **Commander**: Para la manipulaicon de Argumentos.
+- **nodemailer**: Para enviar e-mails.
 
 ## Instalación
 1. Clona este repositorio:
