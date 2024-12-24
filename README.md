@@ -1,7 +1,10 @@
 # Proyecto Backend - Práctica
 
 ## Descripción
-Este proyecto es una aplicación backend construida con Node.js y Express. Integra múltiples funcionalidades como autenticación con Passport, manejo de datos con MongoDB y Mongoose, sesiones y seguridad con JSON Web Tokens y bcrypt. Está diseñado para manejar carritos, productos y usuarios, además de incluir una interfaz de usuario básica utilizando Handlebars.
+Este proyecto es una aplicación backend construida con Node.js y Express. 
+Integra múltiples funcionalidades como autenticación con Passport, manejo de datos con MongoDB y Mongoose, sesiones y seguridad con JSON Web Tokens y bcrypt. 
+Está diseñado para manejar carritos, productos y usuarios, además de incluir una interfaz de usuario básica utilizando Handlebars.
+Utiliza Passport, con estrategias de passport-local  y passport-jwt.
 
 ## Estructura del Proyecto
 - **public/**: Archivos estáticos como imágenes y estilos.
