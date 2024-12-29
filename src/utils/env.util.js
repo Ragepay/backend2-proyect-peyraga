@@ -15,7 +15,10 @@ const envUtil = {
     REDIRECT_URI: process.env.REDIRECT_URI,
     TOKEN_URL: process.env.TOKEN_URL,
     BASE_URL: process.env.BASE_URL,
-    MODE: process.env.MODE
+    MODE: process.env.MODE,
+    TWILIO_ID: process.env.TWILIO_ID,
+    TWILIO_TOKEN: process.env.TWILIO_TOKEN,
+    TWILIO_PHONE: process.env.TWILIO_PHONE,
 };
 
 export default envUtil;

@@ -10,7 +10,7 @@ import dao from "../dao/index.factory.js";
 import { createHashUtil, verifyHashUtil } from "../utils/hash.util.js"; // Hash Contraeña
 import { createTokenUtil } from "../utils/token.util.js"; // Tokens 
 import envUtil from "../utils/env.util.js";
-
+import {sendSms, sendWhatsappMessage} from "../utils/twilio.util.js";
 // Destructuring de variables de entorno.
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIRECT_URI, SECRET_KEY } = envUtil;
 // Destructuring UsersManager of dao.
@@ -37,6 +37,8 @@ passport.use("register", new LocalStrategy(
             req.body.password = createHashUtil(password);
             const data = req.body;
             const user = await UsersManager.create(data);
+            // Enviar mensaje mediante twilio por registro.
+            //await sendWhatsappMessage(user.phone);
             // Devolvemos user en el objeto req.user.
             return done(null, user);
         } catch (error) {

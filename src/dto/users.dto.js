@@ -17,6 +17,7 @@ class UserDTO {
         this.email = data.email;
         this.photo = data.photo || "https://via.placeholder.com/150";
         this.emailGoogle = data.emailGoogle;
+        this.phone = data.phone || "0";
         this.password = data.password;
         this.role = data.role || "USER";
         this.verifyUser = data.verifyUser || false;

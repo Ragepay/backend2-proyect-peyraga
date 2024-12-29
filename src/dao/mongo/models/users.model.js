@@ -7,6 +7,7 @@ const schema = new Schema({
     name: { type: String },
     email: { type: String, required: true, index: true, unique: true },
     photo: { type: String, default: "https://via.placeholder.com/150" },
+    phone: { type: String, default: "0" },
     emailGoogle: { type: String },
     password: { type: String, required: true },
     role: { type: String, default: 'USER', enum: ['USER', "PREM", "ADMIN"] },
