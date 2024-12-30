@@ -20,8 +20,8 @@ class UserDTO {
         this.phone = data.phone || "0";
         this.password = data.password;
         this.role = data.role || "USER";
-        this.verifyUser = data.verifyUser || false;
-        this.verifyCoder = data.verifyCoder || "1234";
+        this.verify = data.verify || false;
+        this.verifyCode = data.verifyCode;
         this.isOnline = data.isOnline || false;
     }
 }

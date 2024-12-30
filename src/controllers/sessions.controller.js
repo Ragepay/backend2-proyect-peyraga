@@ -56,4 +56,23 @@ function online(req, res, next) {
     res.json200(response, message);
 }
 
-export { online, register, login, google, signout };
+async function verify(req, res, next) {
+    const { verifyCodeFromClient } = req.body;
+    const response = await verify(verifyCodeFromClient);
+    // Verificacion exitosa o no.
+    if (response) {
+        const message = "User verified."
+        res.json200("OK", message);
+    } else {
+        res.json401();
+    }
+
+    /*
+    const { code } = req.params;
+    const response = { online: true };
+    const message = req.user.email.toUpperCase() + " IS ONLINE.";
+    res.json200(response, message);
+    */
+}
+
+export { online, register, login, google, signout, verify };

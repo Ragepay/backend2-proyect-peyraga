@@ -10,7 +10,9 @@ import dao from "../dao/index.factory.js";
 import { createHashUtil, verifyHashUtil } from "../utils/hash.util.js"; // Hash Contraeña
 import { createTokenUtil } from "../utils/token.util.js"; // Tokens 
 import envUtil from "../utils/env.util.js";
-import {sendSms, sendWhatsappMessage} from "../utils/twilio.util.js";
+import { sendSms, sendWhatsappMessage } from "../utils/twilio.util.js";
+import { sendVerifyEmail } from "../utils/nodemailer.util.js";
+import crypto from "crypto";
 // Destructuring de variables de entorno.
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIRECT_URI, SECRET_KEY } = envUtil;
 // Destructuring UsersManager of dao.
@@ -35,10 +37,14 @@ passport.use("register", new LocalStrategy(
             }
             // Hasheo de contraseña y creacion de user.
             req.body.password = createHashUtil(password);
-            const data = req.body;
+            // Creacion del codigo de verificacion
+            const verifyCode = crypto.randomBytes(12).toString("hex");
+            const data = { ...req.body, verifyCode };
             const user = await UsersManager.create(data);
-            // Enviar mensaje mediante twilio por registro.
+            // Enviar mensaje SMS mediante twilio por registro.
             //await sendWhatsappMessage(user.phone);
+            // Enviar email de verificacion.
+            await sendVerifyEmail({ to: user.email, verifyCode });
             // Devolvemos user en el objeto req.user.
             return done(null, user);
         } catch (error) {

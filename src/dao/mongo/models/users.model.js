@@ -11,8 +11,8 @@ const schema = new Schema({
     emailGoogle: { type: String },
     password: { type: String, required: true },
     role: { type: String, default: 'USER', enum: ['USER', "PREM", "ADMIN"] },
-    verifyUser: { type: Boolean, default: false },
-    verifyCoder: { type: String, default: "1234" },
+    verify: { type: Boolean, default: false },
+    verifyCode: { type: String, required: true },
     isOnline: { type: Boolean, default: false }
 });
 

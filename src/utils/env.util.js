@@ -19,6 +19,8 @@ const envUtil = {
     TWILIO_ID: process.env.TWILIO_ID,
     TWILIO_TOKEN: process.env.TWILIO_TOKEN,
     TWILIO_PHONE: process.env.TWILIO_PHONE,
+    NODEMAILER_EMAIL: process.env.NODEMAILER_EMAIL,
+    NODEMAILER_EMAIL_APP_PASSWORD: process.env.NODEMAILER_EMAIL_APP_PASSWORD
 };
 
 export default envUtil;
