@@ -1,6 +1,6 @@
 import CustomRouter from "../../utils/CustomRouter.util.js";
 import passportCB from "../../middlewares/passportCB.mid.js";
-import { online, register, login, google, signout, verify } from "../../controllers/sessions.controller.js";
+import { online, register, login, google, signout, verifyUser } from "../../controllers/sessions.controller.js";
 
 class SessionApiRouter extends CustomRouter {
     constructor() {
@@ -29,7 +29,7 @@ class SessionApiRouter extends CustomRouter {
         this.read("/auth/google/cb", ["PUBLIC"], passportCB("google"), google);
 
         // Verificacion de Usuario registrado.
-        this.create("/verify/:code", ["PUBLIC"], verify);
+        this.read("/verify", ["PUBLIC"], verifyUser);
     }
 }
 

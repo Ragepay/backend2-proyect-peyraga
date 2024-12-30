@@ -1,3 +1,7 @@
+import {
+    verify
+} from "../services/sessions.service.js";
+
 // Funciones Callbacks final de los endpoints de sessions.----------------------------------------------------------
 // Funcion devuelve usuario creado.
 function register(req, res, next) {
@@ -56,16 +60,18 @@ function online(req, res, next) {
     res.json200(response, message);
 }
 
-async function verify(req, res, next) {
-    const { verifyCodeFromClient } = req.body;
-    const response = await verify(verifyCodeFromClient);
+async function verifyUser(req, res, next) {
+    // Extraccion de code y email de query params.
+    const { email, code } = req.query;
+    // Verificacion del codigo.
+    const response = await verify(email, code);
     // Verificacion exitosa o no.
     if (response) {
         const message = "User verified."
         res.json200("OK", message);
     } else {
         res.json401();
-    }
+    };
 
     /*
     const { code } = req.params;
@@ -75,4 +81,4 @@ async function verify(req, res, next) {
     */
 }
 
-export { online, register, login, google, signout, verify };
+export { online, register, login, google, signout, verifyUser };

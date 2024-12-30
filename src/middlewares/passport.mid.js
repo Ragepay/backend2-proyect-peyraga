@@ -39,7 +39,7 @@ passport.use("register", new LocalStrategy(
             req.body.password = createHashUtil(password);
             // Creacion del codigo de verificacion
             const verifyCode = crypto.randomBytes(12).toString("hex");
-            const data = { ...req.body, verifyCode };
+            const data = { ...req.body, verifyCode, photo: `https://ui-avatars.com/api/?background=random&name=${email}` };
             const user = await UsersManager.create(data);
             // Enviar mensaje SMS mediante twilio por registro.
             //await sendWhatsappMessage(user.phone);
@@ -72,9 +72,9 @@ passport.use("login", new LocalStrategy(
             // Obtenemos la contraseña hasheada dentro de la Base de datos.
             const dbPassword = user.password;
             // Verificamos compatibilidad. {Password desde la BBDD} vs {password req.body}.
-            const verify = verifyHashUtil(password, dbPassword);
+            const verifyHash = verifyHashUtil(password, dbPassword);
             // Si no es compatible, la respuesta.
-            if (!verify) {
+            if (!verifyHash) {
                 const info = { message: "INVALID PASSWORD", statusCode: 401 }
                 return done(null, false, info);
             }
@@ -113,13 +113,15 @@ passport.use("google", new GoogleStrategy(
             let user = await UsersManager.readByEmail(profile.id);
             // Si no existe, creamos el user.
             if (!user) {
+                const verifyCode = crypto.randomBytes(12).toString("hex");
                 user = {
                     email: profile.id,
                     name: profile.displayName,
                     lastName: profile.name.familyName,
                     photo: profile.picture,
                     password: createHashUtil(profile.id),
-                    emailGoogle: profile.emails[0].value
+                    emailGoogle: profile.emails[0].value,
+                    verifyCode
                 };
                 // Creamos el user.
                 user = await UsersManager.create(user);
@@ -132,8 +134,8 @@ passport.use("google", new GoogleStrategy(
             });
             // Lo almacenamos en req.token. Para posterior manipulación. 
             req.token = token;
-            // Al user lo ponemos online. Actualizando su propiedad isOnline mediante un update.
-            user = await UsersManager.update(user._id, { isOnline: true });
+            // Al user lo ponemos online. Actualizando su propiedad isOnline mediante un update. Y le damos verificar, ya qeu se logueo con google.
+            user = await UsersManager.update(user._id, { isOnline: true, verify: true });
             // Devolvemos user en el objeto req.user.
             return done(null, user);
         } catch (error) {
