@@ -17,7 +17,6 @@ BotonLogin.addEventListener("click", async (e) => {
         }
         // Fetch y respuesta.
         let response = (await fetch("/api/sessions/login", options)).json();
-        console.log(response);
         if (response.message = "USER LOGGED IN."){
             location.replace("/homeApp")
         } else{

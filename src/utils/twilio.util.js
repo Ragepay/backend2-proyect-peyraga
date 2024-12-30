@@ -10,10 +10,8 @@ async function sendSms(phone) {
             body: "WELCOME TO CODER BACKEND 2",
             from: TWILIO_PHONE,
             to: phone
-        })
-        console.log(`Mensaje enviado a ${phone}`);
+        });
     } catch (error) {
-        console.log(error);
         throw error;
     };
 };
@@ -27,9 +25,7 @@ async function sendWhatsappMessage(phone) {
             from: "whatsapp:+14155238886", // Número de Twilio habilitado para WhatsApp
             to: `whatsapp:${phone}` // Número de destino con código de país
         });
-        console.log(`Mensaje enviado por WhatsApp a ${phone}`);
     } catch (error) {
-        console.log("Error al enviar el mensaje por WhatsApp:", error);
         throw error;
     }
 }

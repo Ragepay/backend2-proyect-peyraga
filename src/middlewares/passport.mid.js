@@ -181,7 +181,6 @@ passport.use("online", new JwtStrategy({
     try {
         // Extraemos el id de la data del token.
         const { user_id } = data;
-        console.log(user_id);
         // Obtenemos el user.
         const user = await UsersManager.readById(user_id);
         // Extraemos la propiedad isOnline.
@@ -218,6 +217,7 @@ passport.use("signout", new JwtStrategy({
         return done(error);
     };
 }
+
 ));
 
 export default passport;
